@@ -57,7 +57,7 @@ class Lilly:
 
             # Запуск музыки на комп
             elif self.compare(command, self.COMMANDS[4]):
-                os.system("start https://www.youtube.com/watch?v=sU9tUAOyExE&list=LL2HkMitR__lenKqpzpjE14g&index=4&t=0s")
+                print(self.sc.send(b"launchYoutubeMusic"))
                 return "Запускаю музыку..."
 
             # Запуск ВК на комп
