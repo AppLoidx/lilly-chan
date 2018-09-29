@@ -1,9 +1,10 @@
 from Parser import Parser
 import os
-
+import ServerClient
 
 class Lilly:
 
+    sc = ServerClient.ServerClient('192.168.43.212', 9090)
     WELCOME_MSG_SEND = False
     SUPER_USER = True
 
@@ -14,6 +15,7 @@ class Lilly:
                 ["ЗАПУСТИ МУЗЫКУ", "MUSIC"],
                 ["ОТКРОЙ ВК", "VK"],
                 ["ПОГОДА"],
+                ["HELIOS"]
                 ]
 
     NEXT_INPUT = "get_command"
@@ -60,13 +62,17 @@ class Lilly:
 
             # Запуск ВК на комп
             elif self.compare(command, self.COMMANDS[5]):
-                os.system("start https://vk.com/feed")
+                print(self.sc.send(b"launchVK"))
                 return "Запускаю ВК на компьютер"
 
             # Отправление погоды сообщением
             elif self.compare(command, self.COMMANDS[6]):
                 return self.parser.get_weather_today()
 
+            # Открытие helios...
+            elif self.compare(command, self.COMMANDS[7]):
+                print(self.sc.send(b"launchHelios"))
+                return "Запускаю Helios"
             # Команда не распознана
             else:
                 self.UNKNOWN_COMMANDS += 1
@@ -82,6 +88,7 @@ class Lilly:
                     return "Не могу распознать команду!"
                 else:
                     return "Я не знаю такой команды."
+
 
     def update_screen(self, input_value):
 
