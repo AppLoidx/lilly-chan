@@ -1,6 +1,3 @@
-import os
+import GetRecipe
 
-import ServerClient
-
-sc = ServerClient.ServerClient('192.168.43.212', 9090)
-print(sc.send(b'hello'))
+int("sdfdsf")

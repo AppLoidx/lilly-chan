@@ -31,7 +31,7 @@ for event in longpoll.listen():
             if user_id not in users_bot_class_dict:
                 users_bot_class_dict[user_id] = Lilly()
             if users_bot_class_dict[user_id].WELCOME_MSG_SEND:
-                write_msg(event.user_id, users_bot_class_dict[user_id].get_command(event.text))
+                write_msg(event.user_id, users_bot_class_dict[user_id].update_screen(event.text))
             else:
                 write_msg(event.user_id, users_bot_class_dict[user_id].get_welcome_msg(event.user_id))
 

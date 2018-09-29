@@ -1,12 +1,17 @@
+from random import random
+
+from GetRecipe import GetRecipe
 from Parser import Parser
 import os
 import ServerClient
 
 class Lilly:
 
+    mobileVersion = True
     sc = ServerClient.ServerClient('192.168.43.212', 9090)
     WELCOME_MSG_SEND = False
     SUPER_USER = True
+    RECIPE_WATCHED = 0
 
     COMMANDS = [["РАСПИСАНИЕ"],
                 ["ТВОЙ СОЗДАТЕЛЬ", "КТО ТЫ?"],
@@ -15,8 +20,17 @@ class Lilly:
                 ["ЗАПУСТИ МУЗЫКУ", "MUSIC"],
                 ["ОТКРОЙ ВК", "VK"],
                 ["ПОГОДА"],
-                ["HELIOS"]
+                ["HELIOS"],
+                ["ПРИВЕТ", "ЗДАРОВА"],
+                ["ЗАВТРАК", "ЧТО ПРИГОТОВИТЬ НА ЗАВТРАК", "ЕДА НА ЗАВТРАК"],
+                ["HELP", "ПОМОЩЬ"]
                 ]
+
+    IDONTKNOW_COMMANS = ["Не могу распознать",
+                         "Прости, но я тебя не понимаю...",
+                         "Что это за слово? Меня ему еще не учили...",
+                         "Попробуй написать это по-другому, может тогда я смогу распознать его!",
+                         "Не знаю... Прости..."]
 
     NEXT_INPUT = "get_command"
 
@@ -34,7 +48,7 @@ class Lilly:
         return "Привет, " + user_name.split()[0] + "!"
 
     def get_command(self, command):
-
+            print("print_command")
             # Расписание
             if self.compare(command, self.COMMANDS[0]):
                 n_day = self.parser.get_day_now()
@@ -55,6 +69,10 @@ class Lilly:
                 self.NEXT_INPUT = "admin_login"
                 return "Введите логин и пароль отдельными сообщениями"
 
+            # Отправление погоды сообщением
+            elif self.compare(command, self.COMMANDS[6]):
+                return self.parser.get_weather_today()
+
             # Запуск музыки на комп
             elif self.compare(command, self.COMMANDS[4]):
                 print(self.sc.send(b"launchYoutubeMusic"))
@@ -65,14 +83,20 @@ class Lilly:
                 print(self.sc.send(b"launchVK"))
                 return "Запускаю ВК на компьютер"
 
-            # Отправление погоды сообщением
-            elif self.compare(command, self.COMMANDS[6]):
-                return self.parser.get_weather_today()
-
             # Открытие helios...
             elif self.compare(command, self.COMMANDS[7]):
                 print(self.sc.send(b"launchHelios"))
                 return "Запускаю Helios"
+
+            elif self.compare(command, self.COMMANDS[8]):
+                return "Привет))"
+
+            elif self.compare(command, self.COMMANDS[9]):
+                self.RECIPE_WATCHED = 0
+                return self.print_breakfast_recipe()
+
+            elif self.compare(command, self.COMMANDS[10]):
+                return self.DOCUMENTATION
             # Команда не распознана
             else:
                 self.UNKNOWN_COMMANDS += 1
@@ -87,22 +111,64 @@ class Lilly:
                 elif self.UNKNOWN_COMMANDS == 4:
                     return "Не могу распознать команду!"
                 else:
-                    return "Я не знаю такой команды."
+                    return self.IDONTKNOW_COMMANS[random.randint(0, len(self.IDONTKNOW_COMMANS))]
+
+    def print_breakfast_recipe(self, amount=0):
+        gr = GetRecipe()
+        recipes = gr.get_breakfast()
+        if amount == 0:
+
+            self.NEXT_INPUT = "print_breakfast_recipe"
+            return "Введите количество рецептов которое нужно вывести" \
+                   " (Максимум: 6 )"
+        else:
+            try:
+                amount = int(amount)
+            except ValueError:
+                self.NEXT_INPUT = "print_breakfast_recipe"
+                return "Я не смогла распознать ваше число. Пожалуйста введите целое число."
+            if (amount < 1):
+                return "Эмм... Не шутите со мной пожалуйста! Введите еще раз. Только сейчас по нормальному!"
+            elif amount > 6:
+                return "Ммм... я не смогу вывести столько рецептов, простите. Может какое-нибудь число поменьше?))"
+            else:
+                ret = ""
+                temp = 0        # Counter
+                for i in range(amount):
+                    ret += "Название: " + recipes[self.RECIPE_WATCHED + amount - i][0] + \
+                           "\n Ссылка: " + recipes[self.RECIPE_WATCHED + amount - i][1]
+                    ret += "\n---------------\n"
+                    temp += 1
+
+                self.NEXT_INPUT = "breakfast_more_check"
+                self.RECIPE_WATCHED += temp
+                return "Вот что я нашла: \n" + ret
 
 
     def update_screen(self, input_value):
+        print(self.NEXT_INPUT)
 
         if self.NEXT_INPUT == "get_command":
-            self.get_command(input_value)
+            return self.get_command(input_value)
 
         if self.NEXT_INPUT == "admin_login":
-            self.admin_login(input_value)
             self.NEXT_INPUT = "admin_pwd"
+            return self.admin_login(input_value)
+
 
         if self.NEXT_INPUT == "admin_pwd":
-            self.admin_pwd(input_value)
             self.NEXT_INPUT = "get_command"
+            return self.admin_pwd(input_value)
 
+        if self.NEXT_INPUT == "print_breakfast_recipe":
+            return self.print_breakfast_recipe(input_value)
+
+        if self.NEXT_INPUT == "breakfast_more_check":
+            if input_value.upper() == "ЕЩЕ":
+                return self.print_breakfast_recipe()
+            else:
+                self.NEXT_INPUT = "get_command"
+                return self.get_command(input_value)
     def admin_login(self, login):
         self.NEXT_INPUT = "admin_pwd"
 
@@ -152,3 +218,10 @@ class Lilly:
                 return True
 
         return False
+
+    DOCUMENTATION = """
+    РАСПИСАНИЕ - еще в разработке
+    ПОГОДА - показывает погоду
+    ЗАВТРАК - показывает рецепты блюд на завтрак
+        - после команды ЗАВТРАК можно ввести "еще", чтобы посмотреть еще несколько рецпетов
+    """
