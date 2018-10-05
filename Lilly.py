@@ -8,11 +8,17 @@ import ServerClient
 class Lilly:
 
     mobileVersion = True
+
+    # IP - адресс соединения  с компьютером
     sc = ServerClient.ServerClient('192.168.43.212', 9090)
+    # Приветственное сообщение было отправлено во время сеанса
     WELCOME_MSG_SEND = False
+    # Режим суперпользователя
     SUPER_USER = True
+    # Рецептов просмотрено во время сеанса
     RECIPE_WATCHED = 0
 
+    # Исполняемые команды. Команды в одном массиве однотипные
     COMMANDS = [["РАСПИСАНИЕ"],
                 ["ТВОЙ СОЗДАТЕЛЬ", "КТО ТЫ?"],
                 ["СПАСИБО", "THX", "THANKS", "THANK YOU", " СПАСИБКИ", "СПС"],
@@ -26,20 +32,30 @@ class Lilly:
                 ["HELP", "ПОМОЩЬ"]
                 ]
 
+    # Различные вариации ответа на неопознанную команду
     IDONTKNOW_COMMANS = ["Не могу распознать",
                          "Прости, но я тебя не понимаю...",
                          "Что это за слово? Меня ему еще не учили...",
                          "Попробуй написать это по-другому, может тогда я смогу распознать его!",
                          "Не знаю... Прости..."]
 
+    # Исполняемая команда, по умолчанию get_command
+    # Может меняться в методе update_screen()
     NEXT_INPUT = "get_command"
 
+    # Используется для ответа не неопознанные команды
     UNKNOWN_COMMANDS = 0
 
     def __init__(self):
+        # Для парсинга сайтов
         self.parser = Parser()
 
-    def get_welcome_msg(self, user_id):
+    def get_welcome_msg(self, user_id: any) -> str:
+
+        """ Возвращает приветственное сообщение с именем пользователя
+        @:param user_id - id пользователя которому присылается сообщение
+        @:return "Привет + $ИМЯ_ПОЛЬЗОВАТЕЛЯ" """
+
         if self.parser.LAST_USER_NAME is None:
             user_name = self.parser.get_user_name_from_vk_id(user_id)
         else:
@@ -48,72 +64,97 @@ class Lilly:
         return "Привет, " + user_name.split()[0] + "!"
 
     def get_command(self, command):
-            print("print_command")
-            # Расписание
-            if self.compare(command, self.COMMANDS[0]):
-                n_day = self.parser.get_day_now()
-                return self.parser.get_schedule_from_file("sh.txt", "Пятница", "нечет")
 
-            # About assistant
-            elif self.compare(command, self.COMMANDS[1]):
-                return "Меня создал Артур. Сейчас я не сильно умею различать получаемые сообщения, но он пообещал " \
+        """
+        Получает команду, затем обрабатывает её со списоком команд используя метод compare
+        и выполняет соответветсвующую команду
+
+        Если команда должна выполниться на компьютере, то через сокеты передает команду на сервер компьютера.
+        Перед применением необходимо, чтобы компьютер и телефон были в одной вай-фай сети и получить значение
+        IP-адреса через ipconfig.
+
+        :param command: команда переданная польщователем
+        :return: Возвращает текст, который следует вывести в сообщении
+        """
+
+        # Расписание
+        if self.compare(command, self.COMMANDS[0]):
+            n_day = self.parser.get_day_now()
+            return self.parser.get_schedule_from_file("sh.txt", "Пятница", "нечет")
+
+        # About assistant
+        elif self.compare(command, self.COMMANDS[1]):
+            return "Меня создал Артур. Сейчас я не сильно умею различать получаемые сообщения, но он пообещал " \
                        "мне в будущем расширить мои функции. Как-то он мне говорил, что я написана на питоне." \
                        "Не знаю, что это значит...но так сказал мой создатель."
 
-            # Ответ на благодарность
-            elif self.compare(command, self.COMMANDS[2]):
-                return "Рада помочь!"
+        # Ответ на благодарность
+        elif self.compare(command, self.COMMANDS[2]):
+            return "Рада помочь!"
 
-            # Авторизация супер пользователя
-            elif self.compare(command, self.COMMANDS[3]):
-                self.NEXT_INPUT = "admin_login"
-                return "Введите логин и пароль отдельными сообщениями"
+        # Авторизация супер пользователя
+        elif self.compare(command, self.COMMANDS[3]):
+            self.NEXT_INPUT = "admin_login"
+            return "Введите логин и пароль отдельными сообщениями"
 
-            # Отправление погоды сообщением
-            elif self.compare(command, self.COMMANDS[6]):
-                return self.parser.get_weather_today()
+        # Отправление погоды сообщением
+        elif self.compare(command, self.COMMANDS[6]):
+            return self.parser.get_weather_today()
 
-            # Запуск музыки на комп
-            elif self.compare(command, self.COMMANDS[4]):
-                print(self.sc.send(b"launchYoutubeMusic"))
-                return "Запускаю музыку..."
+        # Запуск музыки на комп
+        elif self.compare(command, self.COMMANDS[4]):
+            print(self.sc.send(b"launchYoutubeMusic"))
+            return "Запускаю музыку..."
 
-            # Запуск ВК на комп
-            elif self.compare(command, self.COMMANDS[5]):
-                print(self.sc.send(b"launchVK"))
-                return "Запускаю ВК на компьютер"
+        # Запуск ВК на комп
+        elif self.compare(command, self.COMMANDS[5]):
+            print(self.sc.send(b"launchVK"))
+            return "Запускаю ВК на компьютер"
 
-            # Открытие helios...
-            elif self.compare(command, self.COMMANDS[7]):
-                print(self.sc.send(b"launchHelios"))
-                return "Запускаю Helios"
+        # Открытие helios...
+        elif self.compare(command, self.COMMANDS[7]):
+            print(self.sc.send(b"launchHelios"))
+            return "Запускаю Helios"
 
-            elif self.compare(command, self.COMMANDS[8]):
-                return "Привет))"
+        # Повторное приветствие
+        elif self.compare(command, self.COMMANDS[8]):
+            return "Привет))"
 
-            elif self.compare(command, self.COMMANDS[9]):
-                self.RECIPE_WATCHED = 0
-                return self.print_breakfast_recipe()
+        # Рецепт завтрака
+        elif self.compare(command, self.COMMANDS[9]):
+            self.RECIPE_WATCHED = 0
+            return self.print_breakfast_recipe()
 
-            elif self.compare(command, self.COMMANDS[10]):
-                return self.DOCUMENTATION
-            # Команда не распознана
+        # Вывести документацию
+        elif self.compare(command, self.COMMANDS[10]):
+            return self.DOCUMENTATION
+
+        # Команда не распознана
+        else:
+
+            self.UNKNOWN_COMMANDS += 1
+
+            if self.UNKNOWN_COMMANDS == 1:
+                return "Извините, но такой команды я пока не знаю." \
+                       "Пожалуйста, напишите моему создателю, чтобы он его добавил..."
+            elif self.UNKNOWN_COMMANDS == 2:
+                return "Такой команды я тоже не знаю... Простите..."
+            elif self.UNKNOWN_COMMANDS == 3:
+                return "Может вы как-то неправильно пишете команду?"
+            elif self.UNKNOWN_COMMANDS == 4:
+                return "Не могу распознать команду!"
             else:
-                self.UNKNOWN_COMMANDS += 1
+                return self.IDONTKNOW_COMMANS[random.randint(0, len(self.IDONTKNOW_COMMANS))]
 
-                if self.UNKNOWN_COMMANDS == 1:
-                    return "Извините, но такой команды я пока не знаю." \
-                           "Пожалуйста, напишите моему создателю, чтобы он его добавил..."
-                elif self.UNKNOWN_COMMANDS == 2:
-                    return "Такой команды я тоже не знаю... Простите..."
-                elif self.UNKNOWN_COMMANDS == 3:
-                    return "Может вы как-то неправильно пишете команду?"
-                elif self.UNKNOWN_COMMANDS == 4:
-                    return "Не могу распознать команду!"
-                else:
-                    return self.IDONTKNOW_COMMANS[random.randint(0, len(self.IDONTKNOW_COMMANS))]
+    def print_breakfast_recipe(self, amount: int = 0) -> str:
+        """
 
-    def print_breakfast_recipe(self, amount=0):
+        Парсит рецепты с раздела завтрак с помощью класс GetRecipe из файла GetRecipe.py
+
+        :param amount: количество рецептов, которое нужно вывести
+        :return: рецепты
+        """
+
         gr = GetRecipe()
         recipes = gr.get_breakfast()
         if amount == 0:
@@ -146,6 +187,13 @@ class Lilly:
 
 
     def update_screen(self, input_value):
+
+        """
+        Метод для управления выполнением других методов. С помощью параметра NEXT_INPUT вызывает соответствующий
+        метод. Это нужно, чтобы например делать повторный ввод или вызвать определенную последовательность команд
+        :param input_value: вводмое значение пользователся, которое передстся определенному методу.
+        :return: возвращает метод, определенный в параметре NEXT_INPUT
+        """
         print(self.NEXT_INPUT)
 
         if self.NEXT_INPUT == "get_command":
