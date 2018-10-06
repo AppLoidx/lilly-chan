@@ -29,23 +29,3 @@ class GetRecipe(Parser):
                     pass
         return result
 
-    def clean_tag_from_str(self, string_line):
-
-        """
-        Очистка строки stringLine от тэгов и их содержимых
-        :param stringLine: Очищаемая строка
-        :return: очищенная строка
-        """
-
-        result = ""
-        not_skip = True
-        for i in list(string_line):
-            if not_skip:
-                if i == "<":
-                    not_skip = False
-                else:
-                    result += i
-            else:
-                if i == ">":
-                    not_skip = True
-        return result

@@ -29,6 +29,28 @@ class Parser:
             s += char
         return s
 
+    @staticmethod
+    def clean_all_tag_from_str(string_line):
+
+        """
+        Очистка строки stringLine от тэгов и их содержимых
+        :param stringLine: Очищаемая строка
+        :return: очищенная строка
+        """
+
+        result = ""
+        not_skip = True
+        for i in list(string_line):
+            if not_skip:
+                if i == "<":
+                    not_skip = False
+                else:
+                    result += i
+            else:
+                if i == ">":
+                    not_skip = True
+        return result
+
     def set_http(self, http: str):
         self.s = requests.get(http)
         self.b = bs4.BeautifulSoup(self.s.text, "html.parser")

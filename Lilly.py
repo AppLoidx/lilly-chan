@@ -1,14 +1,16 @@
 from random import random
 
+from GetQuestionOfJava import GetQuestionOfJava
 from GetRecipe import GetRecipe
 from Parser import Parser
 import os
 import ServerClient
 
+
 class Lilly:
-
     mobileVersion = True
-
+    # Вопросы про Java OOP
+    get_question_of_java = GetQuestionOfJava()
     # IP - адресс соединения  с компьютером
     sc = ServerClient.ServerClient('192.168.43.212', 9090)
     # Приветственное сообщение было отправлено во время сеанса
@@ -19,17 +21,18 @@ class Lilly:
     RECIPE_WATCHED = 0
 
     # Исполняемые команды. Команды в одном массиве однотипные
-    COMMANDS = [["РАСПИСАНИЕ"],
-                ["ТВОЙ СОЗДАТЕЛЬ", "КТО ТЫ?"],
-                ["СПАСИБО", "THX", "THANKS", "THANK YOU", " СПАСИБКИ", "СПС"],
-                ["ADMIN"],
-                ["ЗАПУСТИ МУЗЫКУ", "MUSIC"],
-                ["ОТКРОЙ ВК", "VK"],
-                ["ПОГОДА"],
-                ["HELIOS"],
-                ["ПРИВЕТ", "ЗДАРОВА"],
-                ["ЗАВТРАК", "ЧТО ПРИГОТОВИТЬ НА ЗАВТРАК", "ЕДА НА ЗАВТРАК"],
-                ["HELP", "ПОМОЩЬ"]
+    COMMANDS = [["РАСПИСАНИЕ"],  # 0
+                ["ТВОЙ СОЗДАТЕЛЬ", "КТО ТЫ?"],  # 1
+                ["СПАСИБО", "THX", "THANKS", "THANK YOU", " СПАСИБКИ", "СПС"],  # 2
+                ["ADMIN"],  # 3
+                ["ЗАПУСТИ МУЗЫКУ", "MUSIC"],  # 4
+                ["ОТКРОЙ ВК", "VK"],  # 5
+                ["ПОГОДА"],  # 6
+                ["HELIOS"],  # 7
+                ["ПРИВЕТ", "ЗДАРОВА"],  # 8
+                ["ЗАВТРАК", "ЧТО ПРИГОТОВИТЬ НА ЗАВТРАК", "ЕДА НА ЗАВТРАК"],  # 9
+                ["HELP", "ПОМОЩЬ"],  # 10
+                ["JAVA OOP", "ВОПРОС ПРО JAVA OOP", "ЗАДАЙ ВОПРОС ПРО JAVA"],  # 11
                 ]
 
     # Различные вариации ответа на неопознанную команду
@@ -85,8 +88,8 @@ class Lilly:
         # About assistant
         elif self.compare(command, self.COMMANDS[1]):
             return "Меня создал Артур. Сейчас я не сильно умею различать получаемые сообщения, но он пообещал " \
-                       "мне в будущем расширить мои функции. Как-то он мне говорил, что я написана на питоне." \
-                       "Не знаю, что это значит...но так сказал мой создатель."
+                   "мне в будущем расширить мои функции. Как-то он мне говорил, что я написана на питоне." \
+                   "Не знаю, что это значит...но так сказал мой создатель."
 
         # Ответ на благодарность
         elif self.compare(command, self.COMMANDS[2]):
@@ -129,6 +132,10 @@ class Lilly:
         elif self.compare(command, self.COMMANDS[10]):
             return self.DOCUMENTATION
 
+        # Задать вопрос про Java ООП
+        elif self.compare(command, self.COMMANDS[11]):
+            return self.questions_mode()
+
         # Команда не распознана
         else:
 
@@ -145,6 +152,40 @@ class Lilly:
                 return "Не могу распознать команду!"
             else:
                 return self.IDONTKNOW_COMMANS[random.randint(0, len(self.IDONTKNOW_COMMANS))]
+
+    def questions_mode(self, command="@#"):
+        self.NEXT_INPUT = "questions_mode"
+
+        if command == "@#":
+            return ("Теперь я в режиме вопросов :)\n"
+                    "Доступные команды:\n"
+                    "вопрос - случайный вопрос\n"
+                    "вопрос <номер> - вопрос по номеру\n"
+                    "ответ - ответ на предыдущий вопрос, если я знаю))\n"
+                    "закончить - выйти из режима вопросов((\n"
+                    "очистить - очистить историю вопросов\n"
+                    "хелп - вывести доступные команды\n")
+
+        if command.upper() == "ВОПРОС":
+            return self.get_question_of_java.get_question()[1]
+        if command.upper().split(" ")[0] == "ВОПРОС" and len(command) > 7:
+            return self.get_question_of_java.get_question(int(command.split(" ")[1]) - 2)[1]
+        if command.upper() == "ОТВЕТ":
+            return self.get_question_of_java.get_question(self.get_question_of_java.get_last_question())[2]
+        if command.upper() == "ЗАКОНЧИТЬ":
+            self.NEXT_INPUT = "get_command"
+            return "Режим вопросов закончен"
+        if command.upper() == "ОЧИСТИТЬ":
+            self.get_question_of_java.reset_wasted_questions()
+            return "История очистена!"
+        if command.upper() == "ХЕЛП":
+            return ("Доступные команды:\n"
+                    "вопрос - случайный вопрос\n"
+                    "вопрос <номер> - вопрос по номеру\n"
+                    "ответ - ответ на предыдущий вопрос, если я знаю))\n"
+                    "закончить - выйти из режима вопросов((\n"
+                    "очистить - очистить историю вопросов\n"
+                    "хелп - вывести доступные команды\n")
 
     def print_breakfast_recipe(self, amount: int = 0) -> str:
         """
@@ -174,7 +215,7 @@ class Lilly:
                 return "Ммм... я не смогу вывести столько рецептов, простите. Может какое-нибудь число поменьше?))"
             else:
                 ret = ""
-                temp = 0        # Counter
+                temp = 0  # Counter
                 for i in range(amount):
                     ret += "Название: " + recipes[self.RECIPE_WATCHED + amount - i][0] + \
                            "\n Ссылка: " + recipes[self.RECIPE_WATCHED + amount - i][1]
@@ -184,7 +225,6 @@ class Lilly:
                 self.NEXT_INPUT = "breakfast_more_check"
                 self.RECIPE_WATCHED += temp
                 return "Вот что я нашла: \n" + ret
-
 
     def update_screen(self, input_value):
 
@@ -196,13 +236,15 @@ class Lilly:
         """
         print(self.NEXT_INPUT)
 
+        if self.NEXT_INPUT == "questions_mode":
+            return self.questions_mode(input_value)
+
         if self.NEXT_INPUT == "get_command":
             return self.get_command(input_value)
 
         if self.NEXT_INPUT == "admin_login":
             self.NEXT_INPUT = "admin_pwd"
             return self.admin_login(input_value)
-
 
         if self.NEXT_INPUT == "admin_pwd":
             self.NEXT_INPUT = "get_command"
@@ -217,6 +259,7 @@ class Lilly:
             else:
                 self.NEXT_INPUT = "get_command"
                 return self.get_command(input_value)
+
     def admin_login(self, login):
         self.NEXT_INPUT = "admin_pwd"
 
