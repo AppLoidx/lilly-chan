@@ -2,6 +2,7 @@ import bs4
 import requests
 import time
 
+
 class Parser:
 
     tm = time.localtime()
@@ -9,6 +10,7 @@ class Parser:
     def __init__(self):
         self.s = None
         self.b = None
+
     LAST_USER_NAME = None
 
     def get_user_name_from_vk_id(self, user_id):
@@ -34,7 +36,7 @@ class Parser:
 
         """
         Очистка строки stringLine от тэгов и их содержимых
-        :param stringLine: Очищаемая строка
+        :param string_line: Очищаемая строка
         :return: очищенная строка
         """
 
@@ -78,20 +80,21 @@ class Parser:
 
         return result
 
-    def get_schedule_from_file(self, filename, day, week):
+    @staticmethod
+    def get_schedule_from_file(filename, day, week):
 
         f = open(filename, 'r')
         group_name = f.readline()
-        DAY, TIME, WEEK, AUD, DIS, TEACHER = f.readline().split()
+        _DAY, _TIME, _WEEK, _AUD, _DIS, _TEACHER = f.readline().split()
         temp = "."
         result = group_name + "\nРасписание на " + day + ":\n\n"
         while (temp[0] != "end"):
             temp = f.readline().split()
             if temp[0] == day and (temp[2] == week or temp[2] == "все"):
-                result += TIME + ": " + temp[1] + "\n" \
-                          + AUD + ": " + temp[3] + "\n" \
-                          + DIS + ": " + temp[4] + "\n" \
-                          + TEACHER + ": " + temp[5]
+                result += _TIME + ": " + temp[1] + "\n" \
+                          + _AUD + ": " + temp[3] + "\n" \
+                          + _DIS + ": " + temp[4] + "\n" \
+                          + _TEACHER + ": " + temp[5]
                 result += "\n" + "-----\n"
         return result
 
@@ -107,6 +110,6 @@ class Parser:
 
         return str(self.tm.tm_hour)+" : "+str(self.tm.tm_min)
 
-    def get_day_now(self):
+    def get_day_now(self) -> str:
 
         return str(self.tm.tm_mday)

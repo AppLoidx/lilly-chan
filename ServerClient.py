@@ -2,9 +2,9 @@ import socket
 
 
 class ServerClient:
-    """
-    Для передачи данных на компьютер с помощью сокетов
-    """
+
+    """ Для передачи данных на компьютер с помощью сокетов """
+
     def __init__(self, server_address, server_port):
         self.serverAddress = server_address     # ip-адресс
         self.serverPort = server_port           # порт

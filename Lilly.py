@@ -3,11 +3,11 @@ from random import random
 from GetQuestionOfJava import GetQuestionOfJava
 from GetRecipe import GetRecipe
 from Parser import Parser
-import os
 import ServerClient
 
 
 class Lilly:
+    # Мобильная версия отличается тем, что команды выполниемые на компьютере посылает их через сокеты
     mobileVersion = True
     # Вопросы про Java OOP
     get_question_of_java = GetQuestionOfJava()
@@ -50,6 +50,7 @@ class Lilly:
     UNKNOWN_COMMANDS = 0
 
     def __init__(self):
+
         # Для парсинга сайтов
         self.parser = Parser()
 
@@ -83,7 +84,7 @@ class Lilly:
         # Расписание
         if self.compare(command, self.COMMANDS[0]):
             n_day = self.parser.get_day_now()
-            return self.parser.get_schedule_from_file("sh.txt", "Пятница", "нечет")
+            return "Сегодня : " + n_day + "\n" + self.parser.get_schedule_from_file("sh.txt", "Пятница", "нечет")
 
         # About assistant
         elif self.compare(command, self.COMMANDS[1]):
@@ -134,7 +135,7 @@ class Lilly:
 
         # Задать вопрос про Java ООП
         elif self.compare(command, self.COMMANDS[11]):
-            return self.questions_mode()
+            return self.java_questions_mode()
 
         # Команда не распознана
         else:
@@ -153,8 +154,12 @@ class Lilly:
             else:
                 return self.IDONTKNOW_COMMANS[random.randint(0, len(self.IDONTKNOW_COMMANS))]
 
-    def questions_mode(self, command="@#"):
-        self.NEXT_INPUT = "questions_mode"
+    def java_questions_mode(self, command="@#"):    # @# - если это первый вызов
+
+        """ Переходит в режим вопросов по теме Java. Имеет свои команды взаимодействия."""
+
+        # Следующий ввод перенаправляем в этот метод
+        self.NEXT_INPUT = "java_questions_mode"
 
         if command == "@#":
             return ("Теперь я в режиме вопросов :)\n"
@@ -166,19 +171,22 @@ class Lilly:
                     "очистить - очистить историю вопросов\n"
                     "хелп - вывести доступные команды\n")
 
-        if command.upper() == "ВОПРОС":
+        elif command.upper() == "ВОПРОС":
             return self.get_question_of_java.get_question()[1]
-        if command.upper().split(" ")[0] == "ВОПРОС" and len(command) > 7:
-            return self.get_question_of_java.get_question(int(command.split(" ")[1]) - 2)[1]
-        if command.upper() == "ОТВЕТ":
+
+        elif command.upper().split(" ")[0] == "ВОПРОС" and len(command) > 7:
+            try:
+                return self.get_question_of_java.get_question(int(command.split(" ")[1]) - 2)[1]
+            except IndexError:
+                return "Простите, не нашла такого вопроса... Задайте другой параметр"
+        elif self.compare(command.upper(), ["ОТВЕТ"]):
             return self.get_question_of_java.get_question(self.get_question_of_java.get_last_question())[2]
-        if command.upper() == "ЗАКОНЧИТЬ":
-            self.NEXT_INPUT = "get_command"
-            return "Режим вопросов закончен"
-        if command.upper() == "ОЧИСТИТЬ":
+
+        elif self.compare(command.upper(), ["ОЧИСТИТЬ"]):
             self.get_question_of_java.reset_wasted_questions()
             return "История очистена!"
-        if command.upper() == "ХЕЛП":
+
+        elif self.compare(command.upper(), ["ХЕЛП"]):
             return ("Доступные команды:\n"
                     "вопрос - случайный вопрос\n"
                     "вопрос <номер> - вопрос по номеру\n"
@@ -187,9 +195,15 @@ class Lilly:
                     "очистить - очистить историю вопросов\n"
                     "хелп - вывести доступные команды\n")
 
-    def print_breakfast_recipe(self, amount: int = 0) -> str:
-        """
+        elif self.compare(command.upper(), ["ЗАКОНЧИТЬ"]):
+            self.NEXT_INPUT = "get_command"
+            return "Режим вопросов закончен"
+        else:
+            return "Не поняла вашего ответа, пожалуйста повторите"
 
+    def print_breakfast_recipe(self, amount: int = 0) -> str:
+
+        """
         Парсит рецепты с раздела завтрак с помощью класс GetRecipe из файла GetRecipe.py
 
         :param amount: количество рецептов, которое нужно вывести
@@ -201,15 +215,15 @@ class Lilly:
         if amount == 0:
 
             self.NEXT_INPUT = "print_breakfast_recipe"
-            return "Введите количество рецептов которое нужно вывести" \
-                   " (Максимум: 6 )"
+            return "Введите количество рецептов которое нужно вывести (Максимум: 6 )"
         else:
             try:
                 amount = int(amount)
             except ValueError:
                 self.NEXT_INPUT = "print_breakfast_recipe"
                 return "Я не смогла распознать ваше число. Пожалуйста введите целое число."
-            if (amount < 1):
+
+            if amount < 1:
                 return "Эмм... Не шутите со мной пожалуйста! Введите еще раз. Только сейчас по нормальному!"
             elif amount > 6:
                 return "Ммм... я не смогу вывести столько рецептов, простите. Может какое-нибудь число поменьше?))"
@@ -230,14 +244,15 @@ class Lilly:
 
         """
         Метод для управления выполнением других методов. С помощью параметра NEXT_INPUT вызывает соответствующий
-        метод. Это нужно, чтобы например делать повторный ввод или вызвать определенную последовательность команд
+        метод. Это нужно, чтобы делать повторный ввод или вызвать определенную последовательность команд
         :param input_value: вводмое значение пользователся, которое передстся определенному методу.
         :return: возвращает метод, определенный в параметре NEXT_INPUT
         """
+
         print(self.NEXT_INPUT)
 
-        if self.NEXT_INPUT == "questions_mode":
-            return self.questions_mode(input_value)
+        if self.NEXT_INPUT == "java_questions_mode":
+            return self.java_questions_mode(input_value)
 
         if self.NEXT_INPUT == "get_command":
             return self.get_command(input_value)
@@ -254,7 +269,7 @@ class Lilly:
             return self.print_breakfast_recipe(input_value)
 
         if self.NEXT_INPUT == "breakfast_more_check":
-            if input_value.upper() == "ЕЩЕ":
+            if self.compare(input_value.upper(), ["ЕЩЕ"]):
                 return self.print_breakfast_recipe()
             else:
                 self.NEXT_INPUT = "get_command"
@@ -315,4 +330,5 @@ class Lilly:
     ПОГОДА - показывает погоду
     ЗАВТРАК - показывает рецепты блюд на завтрак
         - после команды ЗАВТРАК можно ввести "еще", чтобы посмотреть еще несколько рецпетов
+    ЗАДАЙ ВОПРОС ПРО JAVA - задает вопросы по теме языка программирования Java
     """
