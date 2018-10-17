@@ -1,8 +1,8 @@
 import bs4
 import requests
 
-from ArrayEditor import ArrayEditor
-from Parse.Parser import Parser
+from editor import editor
+from parse.parser import Parser
 
 
 class Schedule(Parser):

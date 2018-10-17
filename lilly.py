@@ -1,11 +1,11 @@
 from random import random
 import os
-from questions.GetQuestion import GetQuestion
-from Parse.Recipe import Recipe
-from Parse import Parser
-from schedule.ScheduleFromFile import ScheduleFromFile
-from client_server import ServerClient
-from Parse import Date
+from questions.get_question import GetQuestion
+from parse.recipe import Recipe
+from parse import parser
+from schedule.schedule_from_file import ScheduleFromFile
+from client_server import server_client
+from parse import date
 
 
 class Lilly:
@@ -13,16 +13,16 @@ class Lilly:
     def __init__(self):
 
         # Для парсинга сайтов
-        self.parser = Parser.Parser()
+        self.parser = parser.Parser()
         self.schedule = ScheduleFromFile()
         # Для работы с датами
-        self.date = Date.Date()
+        self.date = date.Date()
         # Мобильная версия отличается тем, что команды выполниемые на компьютере посылает их через сокеты
         self.mobileVersion = True
         # Вопросы про Java OOP
         self.get_question_of_java = GetQuestion()
         # IP - адресс соединения  с компьютером
-        self.sc = ServerClient.ServerClient('192.168.43.212', 9090)
+        self.sc = server_client.ServerClient('192.168.43.212', 9090)
         # Приветственное сообщение было отправлено во время сеанса
         self.WELCOME_MSG_SEND = False
         # Режим суперпользователя
@@ -249,7 +249,7 @@ class Lilly:
     def get_breakfast_recipe(self, amount: int = 0) -> str:
 
         """
-        Парсит рецепты с раздела завтрак с помощью класса Recipe из файла Recipe.py
+        Парсит рецепты с раздела завтрак с помощью класса Recipe из файла recipe.py
 
         :param amount: количество рецептов, которое нужно вывести
         :return: рецепты

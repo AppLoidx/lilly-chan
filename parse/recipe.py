@@ -1,4 +1,4 @@
-from Parse.Parser import Parser
+from parse.parser import Parser
 
 
 class Recipe(Parser):

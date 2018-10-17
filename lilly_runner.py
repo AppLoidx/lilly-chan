@@ -1,5 +1,5 @@
 import vk_api
-from Lilly import Lilly
+from lilly import Lilly
 from vk_api.longpoll import VkLongPoll, VkEventType
 import config
 

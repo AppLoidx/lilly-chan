@@ -1,4 +1,4 @@
-from Parse.Parser import Parser
+from parse.parser import Parser
 
 
 class Date(Parser):
@@ -18,7 +18,7 @@ class Date(Parser):
         return self._date[1]
 
     def get_time(self):
-        return self.clean_all_tag_from_str(str(self.b.select(".page")[0].findAll("h2")[1]))
+        return self.clean_all_tag_from_str(str(self.b.select(".page")[0].findAll("h2")[1])).split()[1]
 
     def get_week_parity(self):
         b_site = self.set_http("http://www.ifmo.ru/ru/schedule/0/P3112/raspisanie_zanyatiy_P3112.htm")
