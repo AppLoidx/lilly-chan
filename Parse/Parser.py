@@ -9,17 +9,16 @@ class Parser:
     tm = time.localtime()
 
     def __init__(self):
-        self.s = None
-        self.b = None
-
+        pass
     LAST_USER_NAME = None
 
     # TODO: Rewrite to class
     def get_user_name_from_vk_id(self, user_id):
 
-        s = requests.get("https://vk.com/id"+str(user_id))
-        b = bs4.BeautifulSoup(s.text, "html.parser")
+        #s = requests.get("https://vk.com/id"+str(user_id))
+        #b = bs4.BeautifulSoup(s.text, "html.parser")
 
+        b = self.set_http("https://vk.com/id"+str(user_id))
         user_name = self.clean_tag_from_str(b.findAll("title")[0])
 
         self.LAST_USER_NAME = user_name
@@ -56,8 +55,10 @@ class Parser:
         return result
 
     def set_http(self, http: str):
-        self.s = requests.get(http)
-        self.b = bs4.BeautifulSoup(self.s.text, "html.parser")
+        request = requests.get(http)
+        bs = bs4.BeautifulSoup(request.text, "html.parser")
+
+        return bs
 
     # TODO: Rewrite to class
     def get_weather_today(self, city: str = "санкт-петербург") -> list:
@@ -81,22 +82,4 @@ class Parser:
         weather = temp[0].getText()
         result = result + weather.strip()
 
-        return result
-
-    @staticmethod
-    def get_schedule_from_file(filename, day, week):
-
-        f = open(filename, 'r')
-        group_name = f.readline()
-        _DAY, _TIME, _WEEK, _AUD, _DIS, _TEACHER = f.readline().split()
-        temp = "."
-        result = group_name + "\nРасписание на " + day + ":\n\n"
-        while (temp[0] != "end"):
-            temp = f.readline().split()
-            if temp[0] == day and (temp[2] == week or temp[2] == "все"):
-                result += _TIME + ": " + temp[1] + "\n" \
-                          + _AUD + ": " + temp[3] + "\n" \
-                          + _DIS + ": " + temp[4] + "\n" \
-                          + _TEACHER + ": " + temp[5]
-                result += "\n" + "-----\n"
         return result

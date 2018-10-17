@@ -7,7 +7,7 @@ class Date(Parser):
     def __init__(self):
 
         super().__init__()
-        self.set_http("https://my-calend.ru/date-and-time-today")
+        self.b = self.set_http("https://my-calend.ru/date-and-time-today")
         self._date = self.clean_all_tag_from_str(self.b.select(".page")[0].findAll("h2")[0]).split(",")
         self._day_of_week = self._date[1]
 
@@ -20,3 +20,7 @@ class Date(Parser):
     def get_time(self):
         return self.clean_all_tag_from_str(str(self.b.select(".page")[0].findAll("h2")[1]))
 
+    def get_week_parity(self):
+        b_site = self.set_http("http://www.ifmo.ru/ru/schedule/0/P3112/raspisanie_zanyatiy_P3112.htm")
+
+        return self.clean_all_tag_from_str(b_site.select(".schedule-week")[0].find("strong"))

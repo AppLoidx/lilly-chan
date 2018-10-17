@@ -5,6 +5,7 @@ from Parse.Recipe import Recipe
 from Parse import Parser
 from ScheduleFromFile import ScheduleFromFile
 from client_server import ServerClient
+from Parse import Date
 
 
 class Lilly:
@@ -14,6 +15,8 @@ class Lilly:
         # Для парсинга сайтов
         self.parser = Parser.Parser()
         self.schedule = ScheduleFromFile()
+        # Для работы с датами
+        self.date = Date.Date()
         # Мобильная версия отличается тем, что команды выполниемые на компьютере посылает их через сокеты
         self.mobileVersion = True
         # Вопросы про Java OOP
@@ -29,7 +32,7 @@ class Lilly:
 
         # TODO: convert it to file or sql data base
         # Исполняемые команды. Команды в одном массиве однотипные
-        self.COMMANDS = [["РАСПИСАНИЕ"],  # 0
+        self.COMMANDS = [["РАСПИСАНИЕ", "РАСПИСАНИЕ ЗАВТРА"],  # 0
                          ["ТВОЙ СОЗДАТЕЛЬ", "КТО ТЫ?"],  # 1
                          ["СПАСИБО", "THX", "THANKS", "THANK YOU", " СПАСИБКИ", "СПС"],  # 2
                          ["ADMIN"],  # 3
@@ -88,13 +91,12 @@ class Lilly:
 
         # TODO: reformat to parse from ifmo official site
         # Расписание
-        if self.compare(command, self.COMMANDS[0]):
-            # n_day = self.parser.get_day_now()
-            if os.name == "nt":
-                sh_file_path = "shWindows.txt"
-            else:
-                sh_file_path = "sh.txt"
-            return "Сегодня : " + "\n" + self.schedule.get_schedule_from_file(sh_file_path, "Пятница", "нечет")
+        if self.compare(command.split(" ")[0], self.COMMANDS[0]):
+            command = command.split(" ")
+            if len(command) > 1:
+                if self.compare(command[1], ["ЗАВТРА"]):
+                    return self.get_schedule("tomorrow")
+            return self.get_schedule()
 
         # TODO: convert ask to file text
         # About assistant
@@ -140,7 +142,7 @@ class Lilly:
         # Рецепт завтрака
         elif self.compare(command, self.COMMANDS[9]):
             self.RECIPE_WATCHED = 0
-            return self.print_breakfast_recipe()
+            return self.get_breakfast_recipe()
 
         # TODO: reformat to input from file
         # Вывести документацию
@@ -216,8 +218,35 @@ class Lilly:
         else:
             return "Не поняла вашего ответа, пожалуйста повторите"
 
+    def get_schedule(self, tomorrow="no"):
+
+        # TODO: Rewrite it to class Day
+        days = ["понедельник", "вторник", "среда", "четверг", "пятница", "суббота", "воскресенье"]
+
+        # Файлы с разными кодрировками
+        if os.name == "nt":
+            sh_filename = "shWindows.txt"
+        else:
+            sh_filename = "sh.txt"
+
+        today_day = self.date.get_day_of_week().strip()
+
+        # Получение следующего дня
+        if tomorrow == "tomorrow":
+            for i in range(len(days)):
+                if days[i] == today_day:
+                    if i + 1 == len(days):
+                        today_day = days[0]
+                        break
+                    else:
+                        today_day = days[i+1]
+                        break
+
+        week_parity = self.date.get_week_parity()
+        return self.schedule.get_schedule_from_file(sh_filename, today_day, week_parity)
+
     # TODO: Rewrite to class Recipe
-    def print_breakfast_recipe(self, amount: int = 0) -> str:
+    def get_breakfast_recipe(self, amount: int = 0) -> str:
 
         """
         Парсит рецепты с раздела завтрак с помощью класса Recipe из файла Recipe.py
@@ -230,13 +259,13 @@ class Lilly:
         recipes = gr.get_breakfast()
         if amount == 0:
 
-            self.NEXT_INPUT = "print_breakfast_recipe"
+            self.NEXT_INPUT = "get_breakfast_recipe"
             return "Введите количество рецептов которое нужно вывести (Максимум: 6 )"
         else:
             try:
                 amount = int(amount)
             except ValueError:
-                self.NEXT_INPUT = "print_breakfast_recipe"
+                self.NEXT_INPUT = "get_breakfast_recipe"
                 return "Я не смогла распознать ваше число. Пожалуйста введите целое число."
 
             if amount < 1:
@@ -282,12 +311,12 @@ class Lilly:
             self.NEXT_INPUT = "get_command"
             return self.admin_pwd(input_value)
 
-        if self.NEXT_INPUT == "print_breakfast_recipe":
-            return self.print_breakfast_recipe(input_value)
+        if self.NEXT_INPUT == "get_breakfast_recipe":
+            return self.get_breakfast_recipe(input_value)
 
         if self.NEXT_INPUT == "breakfast_more_check":
             if self.compare(input_value.upper(), ["ЕЩЕ"]):
-                return self.print_breakfast_recipe()
+                return self.get_breakfast_recipe()
             else:
                 self.NEXT_INPUT = "get_command"
                 return self.get_command(input_value)

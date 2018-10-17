@@ -21,7 +21,7 @@ class Recipe(Parser):
 
         result = [0]
         if food_type == "breakfast":
-            self.set_http(self._BREAKFAST_HTTP)
+            self.b = self.set_http(self._BREAKFAST_HTTP)
         elif food_type == "lunch":
             self.set_http(self._LUNCH_HTTP)
         else:
