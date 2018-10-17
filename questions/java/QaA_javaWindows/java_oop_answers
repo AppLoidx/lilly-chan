@@ -1,0 +1,1138 @@
+1. Назовите принципы ООП и расскажите о каждом.
+Объектно-ориентированное программирование (ООП) — это методология программирования, основанная на представлении программы в виде совокупности объектов, каждый из которых является экземпляром определенного класса, а классы образуют иерархию наследования.
+
+Основные принципы ООП: абстракция, инкапсуляция, наследование, полиморфизм.
+
+Абстракция —  означает выделение значимой информации и исключение из рассмотрения незначимой. С точки зрения программирования это правильное разделение программы на объекты. Абстракция позволяет отобрать главные характеристики и опустить второстепенные.
+
+Пример: описание должностей в компании. Здесь название должности значимая информация, а описание обязанностей у каждой должности это второстепенная информация. К примеру главной характеристикой для «директор» будет то, что это должность чем-то управляет, а чем именно (директор по персоналу, финансовый директор, исполнительный директор) это уже второстепенная информация.
+
+Инкапсуляция — свойство системы, позволяющее объединить данные и методы, работающие с ними, в классе. Для Java корректно будет говорить, что инкапсуляция это «сокрытие реализации». Пример из жизни — пульт от телевизора. Мы нажимаем кнопочку «увеличить громкость» и она увеличивается, но в этот момент происходят десятки процессов, которые скрыты от нас. Для Java: можно создать класс с 10 методами, например вычисляющие площадь сложной фигуры, но сделать из них 9 private. 10й метод будет называться «вычислитьПлощадь()» и объявлен public, а в нем уже будут вызываться необходимые скрытые от пользователя методы. Именно его и будет вызывать пользователь.
+
+Наследование — свойство системы, позволяющее описать новый класс на основе уже существующего с частично или полностью заимствующейся функциональностью. Класс, от которого производится наследование, называется базовым, родительским или суперклассом. Новый класс — потомком, наследником, дочерним или производным классом.
+
+Полиморфизм — свойство системы использовать объекты с одинаковым интерфейсом без информации о типе и внутренней структуре объекта. Пример (чуть переделанный) из Thinking in Java:
+
+
+public interface Shape {
+    void draw();
+    void erase();
+}
+public class Circle implements Shape {
+    public void draw() {
+        System.out.println("Circle.draw()");
+    }
+}
+public class Triangle implements Shape {
+    public void draw() {
+        System.out.println("Triangle.draw()");
+    }
+}
+
+public class TestPol {
+
+    public static void main(String[] args) {
+        Shape shape1 = new Circle();
+        Shape shape2 = new Triangle();
+        testPoly(shape1);
+        testPoly(shape2);
+    }
+
+    public static void testPoly(Shape shape) {
+        shape.draw();
+    }
+}
+//Вывод в консоль:
+//Circle.draw()
+//Triangle.draw()
+
+public interface Shape {
+    void draw();
+    void erase();
+}
+public class Circle implements Shape {
+    public void draw() {
+        System.out.println("Circle.draw()");
+    }
+}
+public class Triangle implements Shape {
+    public void draw() {
+        System.out.println("Triangle.draw()");
+    }
+}
+
+public class TestPol {
+
+    public static void main(String[] args) {
+        Shape shape1 = new Circle();
+        Shape shape2 = new Triangle();
+        testPoly(shape1);
+        testPoly(shape2);
+    }
+
+    public static void testPoly(Shape shape) {
+        shape.draw();
+    }
+}
+//Вывод в консоль:
+//Circle.draw()
+//Triangle.draw()
+Есть общий интерфейс «Фигура» и две его реализации «Треугольник» и «Круг». У каждого есть метод «нарисовать». Благодаря полиморфизму нам нет нужды писать отдельный метод для каждой из множества фигур, чтобы вызвать метод «нарисовать».  Вызов полиморфного метода позволяет одному типу выразить свое отличие от другого, сходного типа, хотя они и происходят от одного базового типа. Это отличие выражается различным действием методов, вызываемых через базовый класс (или интерфейс).
+Здесь приведен пример полиморфизма (также называемый динамическим связыванием, или поздним связыванием, или связыванием во время выполнения), в котором продемонстрировано как во время выполнения программы будет выполнен тот метод, который принадлежит передаваемому объекту.
+
+Если бы не было полиморфизма и позднего связывания, то эта же программа выглядела бы примерно так:
+
+
+public static void testPolyCircle(Circle circle) {
+        circle.draw();
+    }
+    public static void testPolyTriangle(Triangle triangle) {
+        triangle.draw();
+    }
+
+public static void testPolyCircle(Circle circle) {
+        circle.draw();
+    }
+    public static void testPolyTriangle(Triangle triangle) {
+        triangle.draw();
+    }
+Т.е. для каждого класса (фигуры) мы бы писали отдельный метод. Здесь их два, а если фигур (классов) сотни?
+$$
+2. Дайте определение понятию “класс”.
+Класс – это описатель общих свойств группы объектов. Этими свойствами могут быть как характеристики объектов (размер, вес, цвет и т.п.), так и поведения, роли и т.п.
+$$
+3. Что такое поле/атрибут класса?
+Поле (атрибут) класса — это характеристика объекта. Например для фигуры это может быть название, площадь, периметр.
+
+
+public class Circle implements Shape {
+
+    private String name;
+    private Double area;
+    private String perimeter;
+
+}
+
+public class Circle implements Shape {
+
+    private String name;
+    private Double area;
+    private String perimeter;
+
+}
+$$
+4. Как правильно организовать доступ к полям класса?
+Модификатор доступа — private. Доступ через методы get\set.
+$$
+5. Дайте определение понятию “конструктор”.
+Конструктор — это специальный метод, который вызывается при создании нового объекта. Конструктор инициализирует объект непосредственно во время создания. Имя конструктора совпадает с именем класса, включая регистр, а по синтаксису конструктор похож на метод без возвращаемого значения.
+
+
+public class Circle implements Shape {
+
+   public Circle() {
+    }
+}
+
+public class Circle implements Shape {
+
+   public Circle() {
+    }
+}
+$$
+6. Чем отличаются конструкторы по-умолчанию, копирования и конструктор с параметрами?
+Конструктор по умолчанию не принимает никаких параметров. Конструктор копирования принимает в качестве параметра объект класса. Конструктор с параметрами принимает на вход параметры (обычно необходимые для инициализации полей класса).
+
+
+    //конструктор по умолчанию
+    public Circle() {
+    }
+
+    //конструктор копирования
+    public Circle(Circle circle) {
+        this(circle.getName(), circle.getArea(), circle.getPerimeter()); //будет вызван конструктор с параметрами ниже
+    }
+
+    //конструктор с параметрами
+    public Circle(String name, Double area, String perimeter) {
+        this.name = name;
+        this.area = area;
+        this.perimeter = perimeter;
+    }
+
+    //конструктор по умолчанию
+    public Circle() {
+    }
+
+    //конструктор копирования
+    public Circle(Circle circle) {
+        this(circle.getName(), circle.getArea(), circle.getPerimeter()); //будет вызван конструктор с параметрами ниже
+    }
+
+    //конструктор с параметрами
+    public Circle(String name, Double area, String perimeter) {
+        this.name = name;
+        this.area = area;
+        this.perimeter = perimeter;
+    }
+Обращаю внимание, что тема копирования (clone()) достаточно глубокая с возможностью возникновения множества неявных проблем. Немного можно почитать здесь http://habrahabr.ru/post/246993/.
+$$
+7. Какие модификации уровня доступа вы знаете, расскажите про каждый из них.
+private (закрытый) — доступ к члену класса не предоставляется никому, кроме методов этого класса. Другие классы того же пакета также не могут обращаться к private-членам.
+default, package, friendly, доступ по умолчанию, когда никакой модификатор не присутствует — член класса считается открытым внутри своего собственного пакета, но не доступен для кода, расположенного вне этого пакета.Т.е. если package2.Class2 extends package1.MainClass, то в Class2 методы без идентификатора из MainClass видны не будут.
+protected (защищённый) — доступ в пределах пакета и классов наследников. Доступ в классе из другого пакета будет к методам public и protected главного класса. Т.е. если package2.Class2 extends package1.MainClass, то внутри package2.Class2 методы с идентификатором protected из MainClass будут видны.
+public (открытый) — доступ для всех из любого другого кода проекта
+Модификаторы в списке расположены по возрастающей видимости в программе.
+$$
+8. Расскажите об особенностях класса с единственным закрытым (private) конструктором.
+Невозможно создать объект класса у которого единственный private конструктор за пределами класса. Поэтому нельзя унаследоваться от такого класса. При попытке унаследоваться будет выдаваться ошибка: There is no default constructor available in имяКласса. А при попытке создать объект этого класса: ИмяКласса() has private access in ИмяКласса
+$$
+9. О чем говорят ключевые слова “this”, “super”, где и как их можно использовать?
+super — используется для обращения к базовому классу, а this к текущему. Пример:
+
+
+public class Animal {
+
+    public void eat() {
+        System.out.println("animal eat");
+    }
+}
+
+public class Dog extends Animal {
+
+    public void eat() {
+        System.out.println("Dog eat");
+    }
+    public void thisEat() {
+        System.out.println("Call Dog.eat()");
+        this.eat();
+    }
+
+    public void superEat() {
+        System.out.println("Call Animal.eat()");
+        super.eat();
+    }
+
+}
+
+public class Test {
+
+    public static void main(String[] args) {
+        Dog dog = new Dog();
+        dog.eat();
+        dog.thisEat();
+        dog.superEat();
+    }
+}
+Dog eat
+Call Dog.eat()
+Dog eat
+Call Animal.eat()
+animal eat
+
+public class Animal {
+
+    public void eat() {
+        System.out.println("animal eat");
+    }
+}
+
+public class Dog extends Animal {
+
+    public void eat() {
+        System.out.println("Dog eat");
+    }
+    public void thisEat() {
+        System.out.println("Call Dog.eat()");
+        this.eat();
+    }
+
+    public void superEat() {
+        System.out.println("Call Animal.eat()");
+        super.eat();
+    }
+
+}
+
+public class Test {
+
+    public static void main(String[] args) {
+        Dog dog = new Dog();
+        dog.eat();
+        dog.thisEat();
+        dog.superEat();
+    }
+}
+Dog eat
+Call Dog.eat()
+Dog eat
+Call Animal.eat()
+animal eat
+Если написать super(), то будет вызван конструктор базового класса, а если this(), то конструктор текущего класса. Это можно использовать, например, при вызове конструктора с параметрами:
+
+
+public Dog() {
+        System.out.println("Call empty constructor");
+    }
+
+    public Dog(String name) {
+        System.out.println("Call constructor with Name");
+        this.name = name;
+
+    }
+
+    public Dog(String name, Double weight) {
+        this(name);
+        this.weight = weight;
+        System.out.println("Call constructor with Name and Weight");
+    }
+}
+..
+ public static void main(String[] args) {
+ Dog dog1 = new Dog("name", 25.0);
+}
+//Вывод
+Call constructor with Name
+Call constructor with Name and Weight
+
+public Dog() {
+        System.out.println("Call empty constructor");
+    }
+
+    public Dog(String name) {
+        System.out.println("Call constructor with Name");
+        this.name = name;
+
+    }
+
+    public Dog(String name, Double weight) {
+        this(name);
+        this.weight = weight;
+        System.out.println("Call constructor with Name and Weight");
+    }
+}
+..
+ public static void main(String[] args) {
+ Dog dog1 = new Dog("name", 25.0);
+}
+//Вывод
+Call constructor with Name
+Call constructor with Name and Weight
+$$
+10. Дайте определение понятию “метод”.
+Метод — это последовательность команд, которые вызываются по определенному имени. Можно сказать что это функция и процедура (в случае void метода).
+$$
+11. Что такое сигнатура метода?
+Сигнатура метода в Java — это имя метода плюс параметры (причем порядок параметров имеет значение).
+В сигнатуру метода не входит возвращаемое значение, бросаемые им исключения, а также модификаторы.
+
+Ключевые слова public, protected, private, abstract, static, final, synchronized, native, strictfp в т.ч. аннотации для метода — это модификаторы и не являются частью сигнатуры.
+
+http://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.4.2
+$$
+12. Какие методы называются перегруженными?
+Java позволяет создавать несколько методов с одинаковыми именами, но разными сигнатурами. Создание метода с тем же именем, но с другим набором параметров называется перегрузкой. Какой из перегруженных методов должен выполняться при вызове, Java определяет на основе фактических параметров.
+
+
+public void method() { }
+
+public void method(int a) { }
+
+public void method(String str) { }
+
+public void method() { }
+
+public void method(int a) { }
+
+public void method(String str) { }
+$$
+13. Могут ли нестатические методы перегрузить статические?
+Да. Это будут просто два разных метода для программы. Статический будет доступен по имени класса.
+$$
+14. Расскажите про переопределение методов. Могут ли быть переопределены статические методы?
+Метод в классе-наследнике, совпадающий по сигнатуре с методом из родительского класса называется переопределенным методом. Переопределить базовый статический метод нельзя: Instance method имяМетода in классНаследник cannot override method имяМетода in родительскийКласс
+$$
+15. Может ли метод принимать разное количество параметров (аргументы переменной длины)?
+Да. Запись имеет вид method(type … val). Например public void method(String … strings), где strings это массив, т.е. можно записать
+
+
+ public void method (String ... strings) {
+        for (String s : strings) {
+
+        }
+    }
+
+ public void method (String ... strings) {
+        for (String s : strings) {
+
+        }
+    }
+$$
+16. Можно ли сузить уровень доступа/тип возвращаемого значения при переопределении метода?
+При переопределении метода нельзя сузить модификатор доступа к методу (например с public в MainClass до private в Class extends MainClass). Изменить тип возвращаемого значения при переопределении метода нельзя, будет ошибка attempting to use incompatible return type. Но можно сузить возвращаемое значение, если они совместимы. Например:
+
+
+public class Animal {
+
+    public Animal eat() {
+        System.out.println("animal eat");
+        return null;
+    }
+
+    public Long calc() {
+        return null;
+    }
+
+}
+public class Dog extends Animal {
+
+    public Dog eat() {
+        return new Dog();
+    }
+/*attempting to use incompatible return type
+    public Integer calc() {
+        return null;
+    }
+*/
+}
+
+public class Animal {
+
+    public Animal eat() {
+        System.out.println("animal eat");
+        return null;
+    }
+
+    public Long calc() {
+        return null;
+    }
+
+}
+public class Dog extends Animal {
+
+    public Dog eat() {
+        return new Dog();
+    }
+/*attempting to use incompatible return type
+    public Integer calc() {
+        return null;
+    }
+*/
+}
+$$
+17. Как получить доступ к переопределенным методам родительского класса?
+super.method();
+$$
+18. Какие преобразования называются нисходящими и восходящими?
+Преобразование от потомка к предку называется восходящим, от предка к потомку — нисходящим. Нисходящее преобразование должно указываться явно с помощью указания нового типа в скобках.
+
+Например:
+
+
+Animal dog = new Dog(); //восходящее преобразование. Будет потерян доступ ко всем методам, которые есть только у класса Dog.
+
+int x = 100;
+byte y = (byte) x;  //нисходящее преобразование. Должно быть указано явно
+
+Animal dog = new Dog(); //восходящее преобразование. Будет потерян доступ ко всем методам, которые есть только у класса Dog.
+
+int x = 100;
+byte y = (byte) x;  //нисходящее преобразование. Должно быть указано явно
+$$
+19. Чем отличается переопределение от перегрузки?
+Переопределение используется тогда, когда вы переписываете (переделываете, переопределяете) УЖЕ существующий метод. Перегрузка — это использование одного имени, но с разными входными параметрами. Например нам нужно, чтобы метод toString() для нашего класса выдавал какой-то осмысленный текст. Тогда мы переопределяем метод из класса Object и реализуем этот метод так, как нам это нужно.
+
+
+@Override
+public String toString() {
+return "Хочу чтобы писался текст, а не название класса@2234SD!"
+}
+
+@Override
+public String toString() {
+return "Хочу чтобы писался текст, а не название класса@2234SD!"
+}
+Тогда как перегрузка обычно используется, чтобы не придумывать каждый раз новое имя, когда методы отличаются только входными параметрами. При перегрузке необходимый метод определяется на этапе компиляции на основе сигнатуры вызываемого метода, тогда как при переопределении нужный метод будет выявлен во время выполнения исходя из реального типа объекта.
+$$
+20. Где можно инициализировать статические/нестатические поля?
+Статические поля можно инициализировать при объявлении, в статическом или динамическом блоке инициализации. Нестатические поля можно инициализировать при объявлении, в динамическом блоке инициализации или в конструкторе.
+$$
+21. Зачем нужен оператор instanceof?
+Оператор instanceof возвращает true, если объект является экземпляром класса или его потомком.
+
+
+public class MainClass {
+    public static void main(String[] a) {
+
+    String s = "Hello";
+    int i = 0;
+    String g;
+    if (s instanceof java.lang.String) {
+       // попадем сюда, т.к. выражение будет true
+       System.out.println("s is a String");
+    }
+    if (i instanceof Integer) {
+       // это отобразится, т.к. будет использована автоупаковка (int -> Integer)
+       System.out.println("i is an Integer");
+    }
+    if (g instanceof java.lang.String) {
+       // g не инициализирована и поэтому сюда мы не попадем, т.к.
+       // g - null и instanceof вернет false для null.
+       System.out.println("g is a String");
+    }
+}
+
+public class MainClass {
+    public static void main(String[] a) {
+
+    String s = "Hello";
+    int i = 0;
+    String g;
+    if (s instanceof java.lang.String) {
+       // попадем сюда, т.к. выражение будет true
+       System.out.println("s is a String");
+    }
+    if (i instanceof Integer) {
+       // это отобразится, т.к. будет использована автоупаковка (int -> Integer)
+       System.out.println("i is an Integer");
+    }
+    if (g instanceof java.lang.String) {
+       // g не инициализирована и поэтому сюда мы не попадем, т.к.
+       // g - null и instanceof вернет false для null.
+       System.out.println("g is a String");
+    }
+}
+$$
+22. Зачем нужны и какие бывают блоки инициализации?
+Блоки инициализации представляют собой наборы выражений инициализации полей, заключенные в фигурные скобки и размещаемые внутри класса вне объявлений методов или конструкторов. Блок инициализации выполняется так же, как если бы он был расположен в верхней части тела любого конструктора. Если блоков инициализации несколько, они выполняются в порядке следования в тексте класса. Блок инициализации способен генерировать исключения, если их объявления перечислены в предложениях throws всех конструкторов класса.
+
+Бывают статические и нестатические блоки инициализации. Так же возможно создать такой блок в анонимном классе.
+
+
+class Foo {
+	static List<Character> abc;
+	static {
+		abc = new LinkedList<Character>();
+		for (char c = 'A'; c <= 'Z'; ++c) {
+			abc.add( c );
+		}
+	}
+}
+//Пример нестатического блока инициализации
+class Bar {
+	{
+		System.out.println("Bar: новый экземпляр");
+	}
+}
+//Пример инициализации в анонимном классе
+JFrame frame = new JFrame() {{
+	add(new JPanel() {{
+		add(new JLabel("Хабрахабр?") {{
+			setBackground(Color.BLACK);
+			setForeground(Color.WHITE);
+		}});
+	}});
+}};
+
+class Foo {
+	static List<Character> abc;
+	static {
+		abc = new LinkedList<Character>();
+		for (char c = 'A'; c <= 'Z'; ++c) {
+			abc.add( c );
+		}
+	}
+}
+//Пример нестатического блока инициализации
+class Bar {
+	{
+		System.out.println("Bar: новый экземпляр");
+	}
+}
+//Пример инициализации в анонимном классе
+JFrame frame = new JFrame() {{
+	add(new JPanel() {{
+		add(new JLabel("Хабрахабр?") {{
+			setBackground(Color.BLACK);
+			setForeground(Color.WHITE);
+		}});
+	}});
+}};
+$$
+23. Каков порядок вызова конструкторов и блоков инициализации двух классов: потомка и его предка?
+Сначала вызываются все статические блоки от первого предка до последнего наследника. Потом попарно вызываются динамический блок инициализации и конструктор в той же последовательности (от предка до последнего потомка).
+
+Хорошая картинка, демонстрирующая что происходит на самом деле при инициализации с ресурса javarush.ru:
+
+Порядок инициализации
+
+Вот простенький пример, который это демонстрирует:
+
+
+public class Pet {
+    private String name;
+    static {
+        System.out.println("Static block in Pet");
+    }
+    {
+        System.out.println("First block in Pet");
+    }
+    {
+        System.out.println("Second block in Pet");
+    }
+
+    public Pet() {
+        System.out.println("Pet empty constructor");
+    }
+
+    public Pet(String name) {
+        System.out.println("Pet constructor with Name " + name);
+        this.name = name;
+    }
+}
+
+public class Cat extends Pet {
+
+    private String name;
+    static {
+        System.out.println("Static block in Cat");
+    }
+    {
+        System.out.println("First block in Cat");
+    }
+    {
+        System.out.println("Second block in Cat");
+    }
+
+    public Cat() {
+        System.out.println("Cat empty constructor");
+    }
+
+    public Cat(String name) {
+        super(name); // without this will call super(). Если эту строчку убрать, то будет вызван конструктор Pet();
+        System.out.println("Cat constructor with Name: " + name);
+        this.name = name;
+    }
+
+}
+
+public class TestInitOrder {
+
+    public static void main(String[] args) {
+        Cat cat = new Cat("Rizhick");
+    }
+}
+//Вывод
+Static block in Pet
+Static block in Cat
+First block in Pet
+Second block in Pet
+Pet constructor with Name Rizhick
+First block in Cat
+Second block in Cat
+Cat constructor with Name: Rizhick
+
+public class Pet {
+    private String name;
+    static {
+        System.out.println("Static block in Pet");
+    }
+    {
+        System.out.println("First block in Pet");
+    }
+    {
+        System.out.println("Second block in Pet");
+    }
+
+    public Pet() {
+        System.out.println("Pet empty constructor");
+    }
+
+    public Pet(String name) {
+        System.out.println("Pet constructor with Name " + name);
+        this.name = name;
+    }
+}
+
+public class Cat extends Pet {
+
+    private String name;
+    static {
+        System.out.println("Static block in Cat");
+    }
+    {
+        System.out.println("First block in Cat");
+    }
+    {
+        System.out.println("Second block in Cat");
+    }
+
+    public Cat() {
+        System.out.println("Cat empty constructor");
+    }
+
+    public Cat(String name) {
+        super(name); // without this will call super(). Если эту строчку убрать, то будет вызван конструктор Pet();
+        System.out.println("Cat constructor with Name: " + name);
+        this.name = name;
+    }
+
+}
+
+public class TestInitOrder {
+
+    public static void main(String[] args) {
+        Cat cat = new Cat("Rizhick");
+    }
+}
+//Вывод
+Static block in Pet
+Static block in Cat
+First block in Pet
+Second block in Pet
+Pet constructor with Name Rizhick
+First block in Cat
+Second block in Cat
+Cat constructor with Name: Rizhick
+$$
+24. Где и для чего используется модификатор abstract?
+Абстрактным называется класс, на основе которого не могут создаваться объекты. При этом наследники класса могут быть не абстрактными, на их основе объекты создавать, соответственно, можно. Для того, чтобы превратить класс в абстрактный перед его именем надо указать модификатор abstract.
+
+Абстрактный метод — метод, который не имеет реализации. Если в классе есть хотя бы один абстрактный метод, то весь класс должен быть объявлен абстрактным.
+
+
+public abstract class Fighter {
+    abstract void fight();
+}
+
+public class JudoFighter extends Fighter {
+    @Override
+    void fight() {
+        System.out.println("Учу ушу, руками машу! Бью с лету в душу...");
+    }
+}
+
+public abstract class Fighter {
+    abstract void fight();
+}
+
+public class JudoFighter extends Fighter {
+    @Override
+    void fight() {
+        System.out.println("Учу ушу, руками машу! Бью с лету в душу...");
+    }
+}
+Использование абстрактных классов и методов позволяет описать некую абстракцию, которая должна быть реализована в других классах. Например, мы можем создать абстрактный класс Fighter и объявить в нём абстрактный метод fight(). Т.к. стилей борьбы может быть много, то, например, для JudoFighter extends Fighter метод fight() будет описывать приемы в стиле дзюдо и т.д.
+$$
+25. Можно ли объявить метод абстрактным и статическим одновременно?
+Нет. Получите: Illegal combination of modifiers: ‘abstract’ and ‘static’. Модификатор abstract говорит, что метод будет реализован в другом классе, а static наоборот указывает, что этот метод будет доступен по имени класса.
+$$
+26. Что означает ключевое поле static?
+Модификатор static говорит о том, что метод или поле класса принадлежат не объекту, а классу. Т.е. доступ можно будет получить и не создавая объекта класса. Поля помеченные static инициализируются при инициализации класса. К примеру, Class.forName(«MyClass», true, currentClassLoader), где второй параметр указывает на необходимость проведения инициализации.
+
+На методы, объявленные как static, накладывается ряд ограничений.
+
+Они могут вызывать только другие статические методы.
+Они должны осуществлять доступ только к статическим переменным.
+Они не могут ссылаться на члены типа this или super.
+$$
+27. К каким конструкциям Java применим модификатор static?
+К методу.
+К внутреннему классу.
+К полю.
+К импортируемым классам (с 5-ой java). Например, import static org.junit.Assert.assertThat;
+$$
+28. Что будет, если в static блоке кода возникнет исключительная ситуация?
+Если в явном виде написать любое исключение в static-блоке, то компилятор не скомпилирует исходники. Это все от того, что компилятор умный. В остальном, взаимодействие с исключениями такое же как и в любом другом месте. Если unchecked исключение вывалится в static-блоке, то класс не будет инициализирован.
+Какое исключение выбрасывается при ошибке в блоке инициализации?
+
+Для static:
+
+java.lang.ExceptionInInitializerError — если исключение наследуется от RuntimeException.
+Для init:
+
+exception, который и вызвал исключение, если он наследуется от RuntimeException.
+Верно для static и init:
+
+java.lang.Error — если исключение вызвано Error.
+java.lang.ThreadDeath — смерть потока. Ничего не вываливается.
+$$
+29. Можно ли перегрузить static метод?
+Перегрузить можно, но переопределить нельзя.
+
+
+    public Animal eat() {
+        System.out.println("animal eat");
+        return null;
+    }
+    public static Animal eat(String s) {
+        System.out.println("test static overload");
+        return null;
+    }
+
+    public Animal eat() {
+        System.out.println("animal eat");
+        return null;
+    }
+    public static Animal eat(String s) {
+        System.out.println("test static overload");
+        return null;
+    }
+$$
+30. Что такое статический класс, какие особенности его использования?
+Это вложенный класс, который может обращаться только к статическим полям обертывающего его класса, в том числе и приватным. Доступ к нестатическим полям обрамляющего класса может быть осуществлен только через ссылку на экземпляр обрамляющего объекта. К классу высшего уровня модификатор static неприменим.
+
+В примере показано, что для инициализации внутреннего статического класса нет нужды в инициализации родителя. Но в случае обычного внутреннего класса такой номер не пройдет:
+
+
+public class Test {
+  class A { }
+  static class B { }
+  public static void main(String[] args) {
+    /*will fail - compilation error, you need an instance of Test to instantiate A*/
+    A a = new A();
+    /*will compile successfully, no instance of Test is needed to instantiate B */
+    B b = new B();
+  }
+}
+
+public class Test {
+  class A { }
+  static class B { }
+  public static void main(String[] args) {
+    /*will fail - compilation error, you need an instance of Test to instantiate A*/
+    A a = new A();
+    /*will compile successfully, no instance of Test is needed to instantiate B */
+    B b = new B();
+  }
+}
+Статические вложенные классы, не имеют доступа к нестатическим полям и методам обрамляющего класса, что в некотором роде аналогично статическим методам, объявленным внутри класса. Доступ к нестатическим полям и методам может осуществляться только через ссылку на экземпляр обрамляющего класса. В этом плане static nested классы очень похожи на любые другие классы верхнего уровня.
+$$
+31. Какие особенности инициализации final static переменных?
+Переменные должны быть инициализированы во время объявления или в static блоке.
+$$
+32. Как влияет модификатор static на класс/метод/поле?
+Модификатор static говорит о том, что метод или поле класса принадлежат не объекту, а классу.
+
+Внутри static метода нельзя вызвать не статический метод по имени класса.
+
+Про static класс смотрите ответ выше.
+$$
+33. О чем говорит ключевое слово final?
+Может быть применено к полям, методам или классам. В зависимости к какой сущности приложено данное ключевое слово — будет и различный смысл в его применении.
+
+Для класса. Класс помеченный при помощи final не может иметь наследников.
+Для метода. Метод помеченный при помощи final не может быть переопределен в классах наследниках.
+Для поля. Поле помеченное при помощи слова final не может изменить свое значение после инициализации (инициализируется либо при описании, либо в конструкторе, статическом или динамическом блоке).
+Значение локальных переменных, а так же параметров метода помеченных при помощи слова final не могут быть изменены после присвоения.
+$$
+34. Дайте определение понятию “интерфейс”.
+Ключевое слово interface используется для создания полностью абстрактных классов. Создатель интерфейса определяет имена методов, списки аргументов и типы возвращаемых значений, но не тела методов.
+
+Наличие слова interface означает, что именно так должны выглядеть все классы, которые реализуют данный интерфейс. Таким образом, любой код, использующий конкретный интерфейс, знает только то, какие методы вызываются для этого интерфейса, но не более того.
+
+
+public interface SomeName{
+    void method();
+    int getSum();
+}
+
+public interface SomeName{
+    void method();
+    int getSum();
+}
+$$
+35. Какие модификаторы по умолчанию имеют поля и методы интерфейсов?
+Интерфейс может содержать поля, но они автоматически являются статическими (static) и неизменными (final). Все методы и переменные неявно объявляются как public.
+$$
+36. Почему нельзя объявить метод интерфейса с модификатором final или static?
+Вообще с 8й версии можно static, но нужно чтобы было тело метода. Например
+
+
+public interface Shape {
+    static void draw() {
+        System.out.println("Wow! It is impossible!");
+    };
+}
+
+public interface Shape {
+    static void draw() {
+        System.out.println("Wow! It is impossible!");
+    };
+}
+final модификатор просто бессмысленный. Все методы по умолчанию абстрактные, т.е. их невозможно создать не реализовав где-то еще, но это нельзя будет сделать, если у метода идентификатор final.
+$$
+37. Какие типы классов бывают в java (вложенные… и.т.д.). Это легкий вопрос! Ответьте сами пожалуйста!
+$$
+38. Какие особенности создания вложенных классов: простых и статических.
+Обычные классы (Top level classes)
+Интерфейсы (Interfaces)
+Перечисления (Enum)
+Статические вложенные классы (Static nested classes)
+Есть возможность обращения к внутренним статическим полям и методам класса обертки.
+Внутренние статические интерфейсы могут содержать только статические методы.
+Внутренние классы-члены (Member inner classes)
+Есть возможность обращения к внутренним полям и методам класса обертки.
+Не может иметь статических объявлений.
+Нельзя объявить таким образом интерфейс. А если его объявить без идентификатора static, то он автоматически будет добавлен.
+Внутри такого класса нельзя объявить перечисления.
+Если нужно явно получить this внешнего класса — OuterClass.this
+Локальный класс (Local inner classes)
+Видны только в пределах блока, в котором объявлены.
+Не могут быть объявлены как private/public/protected или static (по этой причине интерфейсы нельзя объявить локально).
+Не могут иметь внутри себя статических объявлений (полей, методов, классов).
+Имеют доступ к полям и методам обрамляющего класса.
+Можно обращаться к локальным переменным и параметрам метода, если они объявлены с модификатором final.
+Анонимные классы (Anonymous inner classes)
+Локальный класс без имени.
+$$
+39. Что вы знаете о вложенных классах, зачем они используются? Классификация, варианты использования, о нарушении инкапсуляции. Ммм... Будет лучше если вы сами узнаете ответ.
+$$
+40. В чем разница вложенных и внутренних классов? Умение самообучатся тоже очень важно!
+$$
+41. Какие классы называются анонимными?
+Вложенный класс — это класс, который объявлен внутри объявления другого класса. Вложенные классы делятся на статические и нестатические (non-static). Собственно нестатические вложенные классы имеют и другое название — внутренние классы (inner classes).
+
+Внутренние классы в Java делятся на такие три вида:
+
+внутренние классы-члены (member inner classes);
+локальные классы (local classes);
+анонимные классы (anonymous classes).
+Внутренние классы-члены ассоциируются не с самим внешним классом, а с его экземпляром. При этом они имеют доступ ко всем его полям и методам.
+
+Локальные классы (local classes) определяются в блоке Java кода. На практике чаще всего объявление происходит в методе некоторого другого класса. Хотя объявлять локальный класс можно внутри статических и нестатических блоков инициализации.
+
+Анонимный класс (anonymous class) — это локальный класс без имени.
+
+Использование вложенных классов всегда приводит к некоторому нарушению инкапсуляции — вложенный класс может обращаться к закрытым членам внешнего класса (но не наоборот!). Если это обстоятельство учитывается в архитектуре вашего приложения, не стоит уделять ему особого внимания, поскольку внутренний класс всего лишь является специализированным членом внешнего класса.
+
+Подробнее http://www.quizful.net/post/inner-classes-java
+$$
+42. Каким образом из вложенного класса получить доступ к полю внешнего класса?
+Если вложенный класс не статический и поле не статическое, то можно просто обратиться к этому полю из внутреннего класса, если только у внутреннего класса не существует поля с таким же литералом, в этом случае нужно обращаться через ссылку на внешний класс так — OuterClass.this.имяПоля
+
+*Из комментария к статье: достаточно, чтобы класс был не статическим, а поле статическое или нет — значения не имеет для Member Inner Class.
+$$
+43. Каким образом можно обратиться к локальной переменной метода из анонимного класса, объявленного в теле этого метода? Есть ли какие-нибудь ограничения для такой переменной?
+Также как и локальные классы, анонимные могут захватывать переменные, доступ к локальным переменным происходит по тем же правилам:
+
+Анонимный класс имеет доступ к полям внешнего класса.
+Анонимный класс не имеет доступ к локальным переменным области, в которой он определен, если они не финальные (final) или неизменяемые (effectively final).
+Как и у других внутренних классов, объявление переменной с именем, которое уже занято, затеняет предыдущее объявление.
+Вы не можете определять статические члены анонимного класса.
+Анонимные классы также могут содержать в себе локальные классы. Конструктора в анонимном классе быть не может.
+
+
+public class Animal {
+
+    Integer classAreaVar2 = 25;
+
+    public void anonymousClassTest() {
+        final Integer[] localAreaVar = {25};
+        //Анонимный класс
+        ActionListener listener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //можно использовать переменные класса без указания final
+                classAreaVar2 = classAreaVar2 + 25;
+
+                //нельзя использовать локальные переменные, если они не final;
+                /*Local variable is accessed from within inner class: needs to be declared final */
+                localAreaVar[0] = localAreaVar[0] +5;
+            }
+        };
+    }
+}
+
+public class Animal {
+
+    Integer classAreaVar2 = 25;
+
+    public void anonymousClassTest() {
+        final Integer[] localAreaVar = {25};
+        //Анонимный класс
+        ActionListener listener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //можно использовать переменные класса без указания final
+                classAreaVar2 = classAreaVar2 + 25;
+
+                //нельзя использовать локальные переменные, если они не final;
+                /*Local variable is accessed from within inner class: needs to be declared final */
+                localAreaVar[0] = localAreaVar[0] +5;
+            }
+        };
+    }
+}
+$$
+44. Как связан любой пользовательский класс с классом Object?
+Все классы являются наследниками суперкласса Object. Это не нужно указывать явно. В результате объект Object o может ссылаться на объект любого другого класса.
+$$
+45. Расскажите про каждый из методов класса Object.
+public final native Class getClass() — возвращает в рантайме класс данного объекта.
+public native int hashCode() — возвращает хеш-код
+public boolean equals(Object obj) — сравнивает объекты.
+protected native Object clone() throws CloneNotSupportedException — клонирование объекта
+public String toString() — возвращает строковое представление объекта.
+public final native void notify() — просыпается один поток, который ждет на “мониторе” данного объекта.
+public final native void notifyAll() — просыпаются все потоки, которые ждут на “мониторе” данного объекта.
+public final native void wait(long timeout) throws InterruptedException — поток переходит в режим ожидания в течение указанного времени.
+public final void wait() throws InterruptedException — приводит данный поток в ожидание, пока другой поток не вызовет notify() или notifyAll() методы для этого объекта.
+public final void wait(long timeout, int nanos) throws InterruptedException — приводит данный поток в ожидание, пока другой поток не вызовет notify() или notifyAll() для этого метода, или пока не истечет указанный промежуток времени.
+protected void finalize() throws Throwable — вызывается сборщиком мусора, когда garbage collector определил, что ссылок на объект больше нет.
+$$
+46. Что такое метод equals(). Чем он отличается от операции ==. - Это уж вы и так должны знать))
+$$
+47. Если вы хотите переопределить equals(), какие условия должны удовлетворяться для переопределенного метода? - Ответ дегко находиться в интернете
+$$
+48. Если equals() переопределен, есть ли какие-либо другие методы, которые следует переопределить? - Ммм... даже я не знаю ответа, простите.
+$$
+49. В чем особенность работы методов hashCode и equals? Каким образом реализованы методы hashCode и equals в классе Object? Какие правила и соглашения существуют для реализации этих методов? Когда они применяются?
+Это метод, определенный в Object, который служит для сравнения объектов. При сравнении объектов при помощи == идет сравнение по ссылкам. При сравнении по equals() идет сравнение по состояниям объектов (реализация метода equals для нового созданного класса ложится на плечи разработчиков). С точки зрения математики equals() обозначает отношение эквивалентности объектов. Эквивалентным называется отношение, которое является симметричным, транзитивным и рефлексивным.
+
+Рефлексивность: для любого ненулевого x, x.equals(x) вернет true;
+Транзитивность: для любого ненулевого x, y и z, если x.equals(y) и y.equals(z) вернет true, тогда и x.equals(z) вернет true;
+Симметричность: для любого ненулевого x и y, x.equals(y) должно вернуть true, тогда и только тогда, когда y.equals(x) вернет true.
+Также для любого ненулевого x, x.equals(null) должно вернуть false
+При переопределении equals() обязательно нужно переопределить метод hashCode(). Равные объекты должны возвращать одинаковые хэш коды.
+Хеш-код — это число. Если более точно, то это битовая строка фиксированной длины, полученная из массива произвольной длины. В терминах Java, хеш-код — это целочисленный результат работы метода, которому в качестве входного параметра передан объект.
+
+Этот метод реализован таким образом, что для одного и того же входного объекта, хеш-код всегда будет одинаковым. Следует понимать, что множество возможных хеш-кодов ограничено примитивным типом int, а множество объектов ограничено только нашей фантазией. Отсюда следует утверждение: “Множество объектов мощнее множества хеш-кодов”. Из-за этого ограничения, вполне возможна ситуация, что хеш-коды разных объектов могут совпасть.
+
+Здесь главное понять, что:
+
+Если хеш-коды разные, то и входные объекты гарантированно разные.
+Если хеш-коды равны, то входные объекты не всегда равны.
+Ситуация, когда у разных объектов одинаковые хеш-коды называется — коллизией. Вероятность возникновения коллизии зависит от используемого алгоритма генерации хеш-кода.
+
+Статья с хабра по equals и hashCode: http://habrahabr.ru/post/168195/
+$$
+50. Какой метод возвращает строковое представление объекта?
+someObject.toString();
+$$
+51. Что будет, если переопределить equals не переопределяя hashCode? Какие могут возникнуть проблемы?
+Нарушится контракт. Классы и методы, которые использовали правила этого контракта могут некорректно работать. Так для объекта HashMap это может привести к тому, что пара, которая была помещена в Map возможно не будет найдена в ней при обращении к Map, если используется новый экземпляр ключа.
+$$
+52. Есть ли какие-либо рекомендации о том, какие поля следует использовать при подсчете hashCode?
+Те, которые используют при определении метода equals(). Хэш код должен быть равномерно распределен на области возможных принимаемых значений.
+$$
+53. Как вы думаете, будут ли какие-то проблемы, если у объекта, который используется в качестве ключа в hashMap изменится поле, которое участвует в определении hashCode?
+Будут. При обращении по ключу мы можем не найти значение.
+$$
+54. Чем отличается абстрактный класс от интерфейса, в каких случаях что вы будете использовать?
+Абстрактные классы используются только тогда, когда есть «is a» тип отношений; интерфейсы могут быть реализованы классами которые не связаны друг с другом.
+
+Абстрактный класс может реализовывать методы; интерфейс может реализовывать статические методы начиная с 8й версии.
+
+Интерфейс может описывать константы и методы. Все методы интерфейса по умолчанию являются публичными (public) и абстрактными (abstract), а поля — public static final. С java 8 в интерфейсах можно реализовывать default и статические методы.
+
+В Java класс может наследоваться (реализовывать) от многих интерфейсов, но только от одного абстрактного класса.
+
+С абстрактными классами вы теряете индивидуальность класса, наследующего его; с интерфейсами вы просто расширяете функциональность каждого класса.
+$$
+55. Можно ли получить доступ к private переменным класса и если да, то каким образом?
+
+public class SomeClass {
+
+    private String name = "SomeNameString";
+    private Integer x = 25;
+
+}
+
+public class TestPrivateAccess {
+
+    public static void main(String[] args) {
+        SomeClass someClass = new SomeClass();
+
+        try {
+            Field reflectField = SomeClass.class.getDeclaredField("name"); //NoSuchFieldException e
+            Field reflectField2 = SomeClass.class.getDeclaredField("x"); //NoSuchFieldException e
+
+            /* Если не дать доступ, то будет ошибка
+            java.lang.IllegalAccessException: Class .. .TestPrivateAccess
+            can not access a member of class .. .SomeClass with modifiers "private"
+            */
+            reflectField.setAccessible(true);
+            reflectField2.setAccessible(true);
+
+            String fieldValue = (String) reflectField.get(someClass); //IllegalAccessException ex
+            Integer fieldValue2 = (Integer) reflectField2.get(someClass); //IllegalAccessException ex
+            System.out.println(reflectField);//private java.lang.String ru.javastudy.interview.oop.privateFieldAccess.SomeClass.name
+            System.out.println(fieldValue); //SomeNameString
+
+            System.out.println(reflectField2);//private java.lang.Integer ru.javastudy.interview.oop.privateFieldAccess.SomeClass.x
+            System.out.println(fieldValue2); //25
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();;
+        }
+
+    }
+}
+
+public class SomeClass {
+
+    private String name = "SomeNameString";
+    private Integer x = 25;
+
+}
+
+public class TestPrivateAccess {
+
+    public static void main(String[] args) {
+        SomeClass someClass = new SomeClass();
+
+        try {
+            Field reflectField = SomeClass.class.getDeclaredField("name"); //NoSuchFieldException e
+            Field reflectField2 = SomeClass.class.getDeclaredField("x"); //NoSuchFieldException e
+
+            /* Если не дать доступ, то будет ошибка
+            java.lang.IllegalAccessException: Class .. .TestPrivateAccess
+            can not access a member of class .. .SomeClass with modifiers "private"
+            */
+            reflectField.setAccessible(true);
+            reflectField2.setAccessible(true);
+
+            String fieldValue = (String) reflectField.get(someClass); //IllegalAccessException ex
+            Integer fieldValue2 = (Integer) reflectField2.get(someClass); //IllegalAccessException ex
+            System.out.println(reflectField);//private java.lang.String ru.javastudy.interview.oop.privateFieldAccess.SomeClass.name
+            System.out.println(fieldValue); //SomeNameString
+
+            System.out.println(reflectField2);//private java.lang.Integer ru.javastudy.interview.oop.privateFieldAccess.SomeClass.x
+            System.out.println(fieldValue2); //25
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();;
+        }
+
+    }
+}
+$$
+56. Что такое volatile и transient? Для чего и в каких случаях можно было бы использовать default?
+volatile  — не используется кэш (имеется ввиду область памяти в которой JVM может сохранять локальную копию переменной, чтобы уменьшить время обращения к переменной) при обращении к полю. Для volatile переменной JVM гарантирует синхронизацию для операций чтения/записи, но не гарантирует для операций изменения значения переменной.
+
+transient — указание того, что при сериализации/десериализации данное поле не нужно сериализовать/десериализовывать.
+$$
+57. Расширение модификаторов при наследовании, переопределение и сокрытие методов. Если у класса-родителя есть метод, объявленный как private, может ли наследник расширить его видимость? А если protected? А сузить видимость?
+Действует общий принцип: расширять видимость можно, сужать нельзя. private методы видны только внутри класса, для потомков они не видны. Поэтому их и расширить нельзя.
+$$
+58. Имеет ли смысл объявлять метод private final?
+Нет, такой метод и так не виден для наследников, а значит не может быть ими переопределен.
+$$
+59. Какие особенности инициализации final переменных?
+Для поля. Поле помеченное при помощи слова final не может изменить свое значение после инициализации.
+Не статическое final поле можно инициализировать: при описании, в конструкторе (во всех), в статическом блоке, в динамическом блоке.
+Статическое final поле (static final) инициализируется либо в статическом блоке, либо при описании.
+Значение локальных переменных, а так же параметров метода помеченных при помощи слова final не могут быть изменены после присвоения.
+$$
+60. Что будет, если единственный конструктор класса объявлен как final?
+К конструктору не применимо ключевое слово final.
+$$
+61. Что такое finalize? Зачем он нужен? Что Вы можете рассказать о сборщике мусора и алгоритмах его работы.
+Метод finalize() вызывается перед тем, как объект будет удален garbage collector (сборщик мусора, далее gc). Существует много различных реализаций gc. Основа работы следующая: gc помечает объекты, на которые больше не ссылаются другие объекты для их удаления. Затем на одном из проходов помеченные объекты удаляются.
+Вызов finalize() не гарантируется, т.к. приложение может быть завершено до того, как будет запущена ещё одна сборка мусора. Да, можно отменить сборку объекта с помощью метода finalize(), присвоив его ссылку какому-то статическому методу.
+$$
+62. Почему метод clone объявлен как protected? Что необходимо для реализации клонирования?
+Это указывает на то, что хоть метод и есть в классе Object и разработчик желает им воспользоваться, то его нужно переопределить. Для этого нужно реализовать интерфейс Clonable, чтобы соблюсти контракт.

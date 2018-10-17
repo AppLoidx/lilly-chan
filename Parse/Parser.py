@@ -1,5 +1,6 @@
 import bs4
 import requests
+import urllib.request
 import time
 
 
@@ -13,6 +14,7 @@ class Parser:
 
     LAST_USER_NAME = None
 
+    # TODO: Rewrite to class
     def get_user_name_from_vk_id(self, user_id):
 
         s = requests.get("https://vk.com/id"+str(user_id))
@@ -57,6 +59,7 @@ class Parser:
         self.s = requests.get(http)
         self.b = bs4.BeautifulSoup(self.s.text, "html.parser")
 
+    # TODO: Rewrite to class
     def get_weather_today(self, city: str = "санкт-петербург") -> list:
 
         http = "https://sinoptik.com.ru/погода-" + city
@@ -97,19 +100,3 @@ class Parser:
                           + _TEACHER + ": " + temp[5]
                 result += "\n" + "-----\n"
         return result
-
-    def get_date(self) -> str:
-
-        """Возвращает дату в формате [(день).(месяц).(год)]"""
-
-        return str(self.tm.tm_mday) + "." + str(self.tm.tm_mon) + "." + str(self.tm.tm_year)
-
-    def get_time(self) -> str:
-
-        """Возвращает время в формате [(часы) : (минуты)]"""
-
-        return str(self.tm.tm_hour)+" : "+str(self.tm.tm_min)
-
-    def get_day_now(self) -> str:
-
-        return str(self.tm.tm_mday)

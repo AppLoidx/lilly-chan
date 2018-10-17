@@ -1,16 +1,14 @@
+from Parse.Parser import Parser
 
-from Parser import Parser
 
-
-class GetRecipe(Parser):
-
+class Recipe(Parser):
     """ Парсим рецепты с сайта russianfood.com """
 
-    _BREAKFAST_HTTP = "https://www.russianfood.com/recipes/bytype/?fid=926"     # рецепты на завтрак
-    _LUNCH_HTTP = "https://www.russianfood.com/recipes/bytype/?fid=927"         # на обед
-    _SUPPER_HTTP = "https://www.russianfood.com/recipes/bytype/?fid=928"        # на ужин
+    _BREAKFAST_HTTP = "https://www.russianfood.com/recipes/bytype/?fid=926"  # рецепты на завтрак
+    _LUNCH_HTTP = "https://www.russianfood.com/recipes/bytype/?fid=927"  # на обед
+    _SUPPER_HTTP = "https://www.russianfood.com/recipes/bytype/?fid=928"  # на ужин
 
-    def get_breakfast(self, food_type = "breakfast"):
+    def get_breakfast(self, food_type="breakfast"):
 
         """
         Получение рецепта для завтрака
@@ -34,10 +32,9 @@ class GetRecipe(Parser):
             temp = str(a[i])
             if i > 2 & i < 70:
                 try:
-                    name = self.clean_tag_from_str(str(a[i]).split("\n")[1])
+                    name = self.clean_all_tag_from_str(str(a[i]).split("\n")[1])
                     http = "https://www.russianfood.com/" + ''.join(list(temp.split("\n")[1])[9:39])
                     result.append([name, http])
                 except IndexError:
                     pass
         return result
-

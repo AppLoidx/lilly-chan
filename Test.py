@@ -1,19 +1,22 @@
-import vk_api
-import time
+from Parse.Schedule import Schedule
 
-vk = vk_api.VkApi(token='63759c99295eb6ccfcbff8e9df2b87fa6522111610963781ffc158c21e37bb3b297cc9cbdd9e5011350f7')
-
-values = {'out':0, "count":100, 'time_offset':60}
+#sch = Schedule("P3112")
+#print(sch.test())
 
 
-def write_msg(user_id, s ):
-    vk.method('messages.send', {'user_id':user_id, "message":s})
+class A:
 
-while True:
-    response = vk.method('messages.get', values)
+    array = []
+    num = 2
 
-    if response['items']:
-        values['last_message_id'] = response['items'][0]['id']
-    for item in response['items']:
-        write_msg(item['user_id'], "hey")
-    time.sleep(1)
+a1 = A()
+a2 = A()
+
+a1.array.append([2, 3, 4])
+a2.array.append([3, 4, 5])
+
+a1.num = 34
+a2.num = 22
+
+print(a1.array, a2.array, A.array)
+print(a1.num, a2.num, A.num)

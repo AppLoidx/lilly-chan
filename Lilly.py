@@ -1,58 +1,62 @@
 from random import random
-
-from GetQuestionOfJava import GetQuestionOfJava
-from GetRecipe import GetRecipe
-from Parser import Parser
-import ServerClient
+import os
+from questions.GetQuestion import GetQuestion
+from Parse.Recipe import Recipe
+from Parse import Parser
+from ScheduleFromFile import ScheduleFromFile
+from client_server import ServerClient
 
 
 class Lilly:
-    # Мобильная версия отличается тем, что команды выполниемые на компьютере посылает их через сокеты
-    mobileVersion = True
-    # Вопросы про Java OOP
-    get_question_of_java = GetQuestionOfJava()
-    # IP - адресс соединения  с компьютером
-    sc = ServerClient.ServerClient('192.168.43.212', 9090)
-    # Приветственное сообщение было отправлено во время сеанса
-    WELCOME_MSG_SEND = False
-    # Режим суперпользователя
-    SUPER_USER = True
-    # Рецептов просмотрено во время сеанса
-    RECIPE_WATCHED = 0
-
-    # Исполняемые команды. Команды в одном массиве однотипные
-    COMMANDS = [["РАСПИСАНИЕ"],  # 0
-                ["ТВОЙ СОЗДАТЕЛЬ", "КТО ТЫ?"],  # 1
-                ["СПАСИБО", "THX", "THANKS", "THANK YOU", " СПАСИБКИ", "СПС"],  # 2
-                ["ADMIN"],  # 3
-                ["ЗАПУСТИ МУЗЫКУ", "MUSIC"],  # 4
-                ["ОТКРОЙ ВК", "VK"],  # 5
-                ["ПОГОДА"],  # 6
-                ["HELIOS"],  # 7
-                ["ПРИВЕТ", "ЗДАРОВА"],  # 8
-                ["ЗАВТРАК", "ЧТО ПРИГОТОВИТЬ НА ЗАВТРАК", "ЕДА НА ЗАВТРАК"],  # 9
-                ["HELP", "ПОМОЩЬ"],  # 10
-                ["JAVA OOP", "ВОПРОС ПРО JAVA OOP", "ЗАДАЙ ВОПРОС ПРО JAVA"],  # 11
-                ]
-
-    # Различные вариации ответа на неопознанную команду
-    IDONTKNOW_COMMANS = ["Не могу распознать",
-                         "Прости, но я тебя не понимаю...",
-                         "Что это за слово? Меня ему еще не учили...",
-                         "Попробуй написать это по-другому, может тогда я смогу распознать его!",
-                         "Не знаю... Прости..."]
-
-    # Исполняемая команда, по умолчанию get_command
-    # Может меняться в методе update_screen()
-    NEXT_INPUT = "get_command"
-
-    # Используется для ответа не неопознанные команды
-    UNKNOWN_COMMANDS = 0
 
     def __init__(self):
 
         # Для парсинга сайтов
-        self.parser = Parser()
+        self.parser = Parser.Parser()
+        self.schedule = ScheduleFromFile()
+        # Мобильная версия отличается тем, что команды выполниемые на компьютере посылает их через сокеты
+        self.mobileVersion = True
+        # Вопросы про Java OOP
+        self.get_question_of_java = GetQuestion()
+        # IP - адресс соединения  с компьютером
+        self.sc = ServerClient.ServerClient('192.168.43.212', 9090)
+        # Приветственное сообщение было отправлено во время сеанса
+        self.WELCOME_MSG_SEND = False
+        # Режим суперпользователя
+        self.SUPER_USER = True
+        # Рецептов просмотрено во время сеанса
+        self.RECIPE_WATCHED = 0
+
+        # TODO: convert it to file or sql data base
+        # Исполняемые команды. Команды в одном массиве однотипные
+        self.COMMANDS = [["РАСПИСАНИЕ"],  # 0
+                         ["ТВОЙ СОЗДАТЕЛЬ", "КТО ТЫ?"],  # 1
+                         ["СПАСИБО", "THX", "THANKS", "THANK YOU", " СПАСИБКИ", "СПС"],  # 2
+                         ["ADMIN"],  # 3
+                         ["ЗАПУСТИ МУЗЫКУ", "MUSIC"],  # 4
+                         ["ОТКРОЙ ВК", "VK"],  # 5
+                         ["ПОГОДА"],  # 6
+                         ["HELIOS"],  # 7
+                         ["ПРИВЕТ", "ЗДАРОВА"],  # 8
+                         ["ЗАВТРАК", "ЧТО ПРИГОТОВИТЬ НА ЗАВТРАК", "ЕДА НА ЗАВТРАК"],  # 9
+                         ["HELP", "ПОМОЩЬ"],  # 10
+                         ["JAVA OOP", "ВОПРОС ПРО JAVA OOP", "ЗАДАЙ ВОПРОС ПРО JAVA"],  # 11
+                         ]
+
+        # TODO: convert it to file or sql data base
+        # Различные вариации ответа на неопознанную команду
+        self.IDONTKNOW_COMMANS = ["Не могу распознать",
+                                  "Прости, но я тебя не понимаю...",
+                                  "Что это за слово? Меня ему еще не учили...",
+                                  "Попробуй написать это по-другому, может тогда я смогу распознать его!",
+                                  "Не знаю... Прости..."]
+
+        # Исполняемая команда, по умолчанию get_command
+        # Может меняться в методе update_screen()
+        self.NEXT_INPUT = "get_command"
+
+        # Используется для ответа не неопознанные команды
+        self.UNKNOWN_COMMANDS = 0
 
     def get_welcome_msg(self, user_id: any) -> str:
 
@@ -67,6 +71,7 @@ class Lilly:
         self.WELCOME_MSG_SEND = True
         return "Привет, " + user_name.split()[0] + "!"
 
+    # TODO: Rewrite to class
     def get_command(self, command):
 
         """
@@ -81,11 +86,17 @@ class Lilly:
         :return: Возвращает текст, который следует вывести в сообщении
         """
 
+        # TODO: reformat to parse from ifmo official site
         # Расписание
         if self.compare(command, self.COMMANDS[0]):
-            n_day = self.parser.get_day_now()
-            return "Сегодня : " + n_day + "\n" + self.parser.get_schedule_from_file("sh.txt", "Пятница", "нечет")
+            # n_day = self.parser.get_day_now()
+            if os.name == "nt":
+                sh_file_path = "shWindows.txt"
+            else:
+                sh_file_path = "sh.txt"
+            return "Сегодня : " + "\n" + self.schedule.get_schedule_from_file(sh_file_path, "Пятница", "нечет")
 
+        # TODO: convert ask to file text
         # About assistant
         elif self.compare(command, self.COMMANDS[1]):
             return "Меня создал Артур. Сейчас я не сильно умею различать получаемые сообщения, но он пообещал " \
@@ -96,6 +107,7 @@ class Lilly:
         elif self.compare(command, self.COMMANDS[2]):
             return "Рада помочь!"
 
+        # TODO: realize it
         # Авторизация супер пользователя
         elif self.compare(command, self.COMMANDS[3]):
             self.NEXT_INPUT = "admin_login"
@@ -105,6 +117,7 @@ class Lilly:
         elif self.compare(command, self.COMMANDS[6]):
             return self.parser.get_weather_today()
 
+        # TODO: reformat couples with computer
         # Запуск музыки на комп
         elif self.compare(command, self.COMMANDS[4]):
             print(self.sc.send(b"launchYoutubeMusic"))
@@ -129,6 +142,7 @@ class Lilly:
             self.RECIPE_WATCHED = 0
             return self.print_breakfast_recipe()
 
+        # TODO: reformat to input from file
         # Вывести документацию
         elif self.compare(command, self.COMMANDS[10]):
             return self.DOCUMENTATION
@@ -154,7 +168,8 @@ class Lilly:
             else:
                 return self.IDONTKNOW_COMMANS[random.randint(0, len(self.IDONTKNOW_COMMANS))]
 
-    def java_questions_mode(self, command="@#"):    # @# - если это первый вызов
+    # TODO: Rewrite to class
+    def java_questions_mode(self, command="@#"):  # @# - если это первый вызов
 
         """ Переходит в режим вопросов по теме Java. Имеет свои команды взаимодействия."""
 
@@ -201,16 +216,17 @@ class Lilly:
         else:
             return "Не поняла вашего ответа, пожалуйста повторите"
 
+    # TODO: Rewrite to class Recipe
     def print_breakfast_recipe(self, amount: int = 0) -> str:
 
         """
-        Парсит рецепты с раздела завтрак с помощью класс GetRecipe из файла GetRecipe.py
+        Парсит рецепты с раздела завтрак с помощью класса Recipe из файла Recipe.py
 
         :param amount: количество рецептов, которое нужно вывести
         :return: рецепты
         """
 
-        gr = GetRecipe()
+        gr = Recipe()
         recipes = gr.get_breakfast()
         if amount == 0:
 
@@ -240,6 +256,7 @@ class Lilly:
                 self.RECIPE_WATCHED += temp
                 return "Вот что я нашла: \n" + ret
 
+    # TODO: Rewrite it to class CommandManager
     def update_screen(self, input_value):
 
         """
@@ -281,6 +298,8 @@ class Lilly:
     def admin_pwd(self, pwd):
         if pwd == "123":
             self.SUPER_USER = True
+
+    # TODO: Rewrite it to class Compare and upgrade algorithm
 
     @staticmethod
     def compare(name: str, array: list, upper: bool = True) -> object:

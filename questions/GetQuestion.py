@@ -1,11 +1,16 @@
 import random
+import os
 
-
-class GetQuestionOfJava:
+class GetQuestion:
 
     answers_file = None
     questions_file = None
-    files_path = "QaA_java"
+
+    # Проблемы с кодировками на разных системах
+    if os.name == "nt":
+        files_path = "questions/java/QaA_javaWindows"
+    else:
+        files_path = "questions/java/QaA_java"
     wasted_questions = []
     last_question = None
 
