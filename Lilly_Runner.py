@@ -1,14 +1,14 @@
 import vk_api
 from Lilly import Lilly
 from vk_api.longpoll import VkLongPoll, VkEventType
-
+import config
 
 def write_msg(user_id, s):
     vk.method('messages.send', {'user_id': user_id, 'message': s})
 
 
 # Авторизуемся как сообщество
-vk = vk_api.VkApi(token='63759c99295eb6ccfcbff8e9df2b87fa6522111610963781ffc158c21e37bb3b297cc9cbdd9e5011350f7')
+vk = vk_api.VkApi(token=config.token)
 
 # Работа с сообщениями
 longpoll = VkLongPoll(vk)

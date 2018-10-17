@@ -7,7 +7,6 @@ from ScheduleFromFile import ScheduleFromFile
 from client_server import ServerClient
 from Parse import Date
 
-
 class Lilly:
 
     def __init__(self):
