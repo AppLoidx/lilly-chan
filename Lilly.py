@@ -3,9 +3,10 @@ import os
 from questions.GetQuestion import GetQuestion
 from Parse.Recipe import Recipe
 from Parse import Parser
-from ScheduleFromFile import ScheduleFromFile
+from schedule.ScheduleFromFile import ScheduleFromFile
 from client_server import ServerClient
 from Parse import Date
+
 
 class Lilly:
 
@@ -224,9 +225,9 @@ class Lilly:
 
         # Файлы с разными кодрировками
         if os.name == "nt":
-            sh_filename = "shWindows.txt"
+            sh_filename = "schedule/shWindows.txt"
         else:
-            sh_filename = "sh.txt"
+            sh_filename = "schedule/sh.txt"
 
         today_day = self.date.get_day_of_week().strip()
 
