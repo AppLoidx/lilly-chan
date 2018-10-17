@@ -1,8 +1,8 @@
-import lilly
+# import lilly
 
-#lilly = Lilly.Lilly()
+# lilly = Lilly.Lilly()
 
-#print(lilly.get_schedule())
+# print(lilly.get_schedule())
 
 from group_queue import queue
 queue = queue.Queue()
