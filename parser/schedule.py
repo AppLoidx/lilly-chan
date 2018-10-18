@@ -2,7 +2,7 @@ import bs4
 import requests
 
 from editor import editor
-from parse.parser import Parser
+from parser.parser import Parser
 
 
 class Schedule(Parser):

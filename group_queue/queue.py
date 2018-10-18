@@ -1,6 +1,6 @@
 import os
 import random
-from parse.date import Date
+from parser.date import Date
 from group_queue.person import Person
 from group_queue.history import History
 
@@ -138,6 +138,11 @@ class Queue:
         return 0
 
     def delete_person(self, person_id: str):
+        """
+        Удаление персонажа с очереди
+        :param person_id: номер ИСУ
+        :return: None
+        """
         person_position = self.get_person_queue_position(person_id) - 1
         del self._queue_list[person_position]
         self.history.write(f"{self._queue_list[person_position].get_name()} удален из очереди в {self.date.get_time()}")

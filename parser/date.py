@@ -1,4 +1,4 @@
-from parse.parser import Parser
+from parser.parser import Parser
 
 
 class Date(Parser):

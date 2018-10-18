@@ -1,11 +1,11 @@
 from random import random
 import os
 from questions.get_question import GetQuestion
-from parse.recipe import Recipe
-from parse import parser
+from parser.recipe import Recipe
+from parser import parser
 from schedule.schedule_from_file import ScheduleFromFile
 from client_server import server_client
-from parse import date
+from parser import date
 from group_queue.queue import Queue
 
 
@@ -93,7 +93,7 @@ class Lilly:
         :return: Возвращает текст, который следует вывести в сообщении
         """
 
-        # TODO: reformat to parse from ifmo official site
+        # TODO: reformat to parser from ifmo official site
         # Расписание
         if self.compare(command.split(" ")[0], self.COMMANDS[0]):
             command = command.split(" ")
