@@ -18,6 +18,7 @@ class Date(Parser):
         return self._date[1]
 
     def get_time(self):
+        self.b = self.set_http("https://my-calend.ru/date-and-time-today")
         return self.clean_all_tag_from_str(str(self.b.select(".page")[0].findAll("h2")[1])).split()[1]
 
     def get_week_parity(self):

@@ -46,6 +46,5 @@ for i in range(len(array)):
     print(f"{i+1}. {array[i].get_name()} ({array[i].get_id()})")
 
 print("\n=====HISTORY=====\n")
-array = queue.get_queue()
-for i in range(len(array)):
-    print(f"{i+1}. {array[i].get_name()} ({array[i].get_id()})")
+for i in queue.history.get_history():
+    print(i)

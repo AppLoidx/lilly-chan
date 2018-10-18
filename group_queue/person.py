@@ -9,8 +9,8 @@ class Person:
     def set_passed(self, passed: bool):
         self.passed = passed
 
-    def get_id(self):
+    def get_id(self) -> str:
         return self._person_id
 
-    def get_name(self):
+    def get_name(self) -> str:
         return self._name

@@ -6,12 +6,14 @@ from parse import parser
 from schedule.schedule_from_file import ScheduleFromFile
 from client_server import server_client
 from parse import date
+from group_queue.queue import Queue
 
 
 class Lilly:
 
     def __init__(self):
 
+        self.queue = Queue()
         # Для парсинга сайтов
         self.parser = parser.Parser()
         self.schedule = ScheduleFromFile()
@@ -44,6 +46,8 @@ class Lilly:
                          ["ЗАВТРАК", "ЧТО ПРИГОТОВИТЬ НА ЗАВТРАК", "ЕДА НА ЗАВТРАК"],  # 9
                          ["HELP", "ПОМОЩЬ"],  # 10
                          ["JAVA OOP", "ВОПРОС ПРО JAVA OOP", "ЗАДАЙ ВОПРОС ПРО JAVA"],  # 11
+                         ["СОЗДАЙ ОЧЕРЕДЬ"],  # 12
+                         ["ОЧЕРЕДЬ","РЕДАКТИРОВАТЬ ОЧЕРЕДЬ"]    # 13
                          ]
 
         # TODO: convert it to file or sql data base
@@ -153,6 +157,18 @@ class Lilly:
         elif self.compare(command, self.COMMANDS[11]):
             return self.java_questions_mode()
 
+        elif self.compare(command, self.COMMANDS[12]):
+            self.queue.new_queue()
+            result = ""
+            persons = self.queue.get_queue()
+            for person_id in range(len(persons)):
+                result += f"{str(person_id + 1)} {persons[person_id].get_name()} ({persons[person_id].get_id()})\n"
+            return str(result)
+
+        elif self.compare(command, self.COMMANDS[13]):
+            self.NEXT_INPUT = "queue_edit_mode"
+            return self.queue_edit_mode(None)
+
         # Команда не распознана
         else:
 
@@ -217,6 +233,62 @@ class Lilly:
             return "Режим вопросов закончен"
         else:
             return "Не поняла вашего ответа, пожалуйста повторите"
+
+    def queue_edit_mode(self, input_value):
+        if input_value is None:
+            return "Режим редактирования очереди:\n" \
+                   "●Поменять <номер Ису> <номер ИСУ>\n" \
+                   "●Добавить <номер ИСУ>\n" \
+                   "●Добавить <номер ИСУ> в <позиция в очереди>\n" \
+                   "●Удалить <номер ИСУ>\n" \
+                   "●Прошел\n" \
+                   "●Следющий\n" \
+                   "●Прыдыдущий\n" \
+                   "●Сейчас\n" \
+                   "●История\n"
+        else:
+            if self.compare(input_value.split()[0], ["Поменять"]):
+                self.queue.swap(input_value.split()[1], input_value.split()[2])
+                return f"Поменялись местами {input_value.split()[1]} {input_value.split()[2]}"
+
+            elif self.compare(input_value.split()[0], ["Добавить"]):
+                if len(input_value.split()) > 2:
+                    self.queue.add_person(input_value.split()[1],int(input_value.split()[3]))
+                else:
+                    self.queue.add_person(input_value.split()[1])
+                return f"{input_value.split()[1]} был добавлен в очередь"
+
+            elif self.compare(input_value.split()[0], ["Удалить"]):
+                self.queue.delete_person(input_value.split()[1])
+                return f"{input_value.split()[1]} был удален из очереди"
+
+            elif self.compare(input_value, ["Прошел"]):
+                self.queue.person_passed()
+                return f"{self.queue.get_last_person_in_queue().get_name()} прошел очередь\n" \
+                       f"Следующий: {self.queue.get_current_person_in_queue().get_name()}"
+
+            elif self.compare(input_value, ["Следующий"]):
+                return self.queue.get_next_person_in_queue().get_name()
+
+            elif self.compare(input_value, ["Предыдущий"]):
+                return self.queue.get_last_person_in_queue().get_name()
+
+            elif self.compare(input_value, ["Сейчас"]):
+                return self.queue.get_current_person_in_queue().get_name()
+
+            elif self.compare(input_value, ["История"]):
+                result = ""
+                for history in self.queue.history.get_history():
+                    result += history + "\n"
+
+                return result
+
+            elif self.compare(input_value, ["Выйти", "Закончить"]):
+                self.NEXT_INPUT = "get_command"
+                return "Вы вышли из режима очереди"
+
+            else:
+                return self.get_command(input_value)
 
     def get_schedule(self, tomorrow="no"):
 
@@ -320,6 +392,8 @@ class Lilly:
             else:
                 self.NEXT_INPUT = "get_command"
                 return self.get_command(input_value)
+        if self.NEXT_INPUT == "queue_edit_mode":
+            return self.queue_edit_mode(input_value)
 
     def admin_login(self, login):
         self.NEXT_INPUT = "admin_pwd"
@@ -331,7 +405,7 @@ class Lilly:
     # TODO: Rewrite it to class Compare and upgrade algorithm
 
     @staticmethod
-    def compare(name: str, array: list, upper: bool = True) -> object:
+    def compare(name: str, array: list, upper: bool = True) -> bool:
         """
         Сравнивает значение переданного слова со значениями массива. Так же учитваются возможные опечатки,
         но только позиционно. То есть каждая позиция проверяется с соответвующей.
@@ -343,6 +417,8 @@ class Lilly:
         """
         if upper:
             name = name.upper()
+            for i in range(len(array)):
+                array[i] = array[i].upper()
 
         for i in array:
             k = 0  # считывание разницы в символах (посимвольно, позиционно)
