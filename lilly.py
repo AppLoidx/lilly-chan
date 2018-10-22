@@ -1,12 +1,13 @@
 from random import random
 import os
 from questions.get_question import GetQuestion
-from parser.recipe import Recipe
-from parser import parser
+from parser_m.recipe import Recipe
+from parser_m import parser
 from schedule.schedule_from_file import ScheduleFromFile
 from client_server import server_client
-from parser import date
+from parser_m import date
 from group_queue.queue import Queue
+from input_manager import InputManager
 
 
 class Lilly:
@@ -93,14 +94,21 @@ class Lilly:
         :return: Возвращает текст, который следует вывести в сообщении
         """
 
-        # TODO: reformat to parser from ifmo official site
         # Расписание
         if self.compare(command.split(" ")[0], self.COMMANDS[0]):
             command = command.split(" ")
             if len(command) > 1:
                 if self.compare(command[1], ["ЗАВТРА"]):
-                    return self.get_schedule("tomorrow")
-            return self.get_schedule()
+                    return self.schedule.get_schedule(1)
+
+                else:
+                    try:
+                        return self.schedule.get_schedule(int(command[1]))
+                    except ValueError:
+                        return "Вы неправильно ввели данные, поэтому я не смогла их прочитать." \
+                               "Я выведу сегодняшнее расписание:\n" + self.schedule.get_schedule()
+
+            return self.schedule.get_schedule()
 
         # TODO: convert ask to file text
         # About assistant
@@ -167,6 +175,7 @@ class Lilly:
 
         elif self.compare(command, self.COMMANDS[13]):
             self.NEXT_INPUT = "queue_edit_mode"
+            self.im.set_next_method("queue_edit_mode")
             return self.queue_edit_mode(None)
 
         # Команда не распознана
@@ -193,7 +202,7 @@ class Lilly:
 
         # Следующий ввод перенаправляем в этот метод
         self.NEXT_INPUT = "java_questions_mode"
-
+        self.im.set_next_method("java_questions_mode")
         if command == "@#":
             return ("Теперь я в режиме вопросов :)\n"
                     "Доступные команды:\n"
@@ -230,6 +239,7 @@ class Lilly:
 
         elif self.compare(command.upper(), ["ЗАКОНЧИТЬ"]):
             self.NEXT_INPUT = "get_command"
+            self.im.set_next_method("get_command")
             return "Режим вопросов закончен"
         else:
             return "Не поняла вашего ответа, пожалуйста повторите"
@@ -285,6 +295,9 @@ class Lilly:
 
             elif self.compare(input_value, ["Выйти", "Закончить"]):
                 self.NEXT_INPUT = "get_command"
+
+                self.im.set_next_method("get_command")
+
                 return "Вы вышли из режима очереди"
 
             else:
@@ -296,10 +309,7 @@ class Lilly:
         days = ["понедельник", "вторник", "среда", "четверг", "пятница", "суббота", "воскресенье"]
 
         # Файлы с разными кодрировками
-        if os.name == "nt":
-            sh_filename = "schedule/shWindows.txt"
-        else:
-            sh_filename = "schedule/sh.txt"
+        sh_filename = "schedule/sh.txt"
 
         today_day = self.date.get_day_of_week().strip()
 
@@ -354,8 +364,22 @@ class Lilly:
                     temp += 1
 
                 self.NEXT_INPUT = "breakfast_more_check"
+
+                self.im.set_next_method("breakfast_more_check")
+
                 self.RECIPE_WATCHED += temp
                 return "Вот что я нашла: \n" + ret
+
+    im = InputManager()
+    im.set_methods(
+        java_questions_mode,
+        get_command,
+        get_breakfast_recipe,
+        queue_edit_mode)
+    im.set_next_method("get_command")
+
+    def update_scr(self, input_value):
+        self.im.update(input_value)
 
     # TODO: Rewrite it to class CommandManager
     def update_screen(self, input_value):

@@ -15,9 +15,6 @@ class Parser:
     # TODO: Rewrite to class
     def get_user_name_from_vk_id(self, user_id):
 
-        #s = requests.get("https://vk.com/id"+str(user_id))
-        #b = bs4.BeautifulSoup(s.text, "html.parser")
-
         b = self.set_http("https://vk.com/id"+str(user_id))
         user_name = self.clean_tag_from_str(b.findAll("title")[0])
 

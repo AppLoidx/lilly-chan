@@ -1,6 +1,6 @@
 import os
 import random
-from parser.date import Date
+from parser_m.date import Date
 from group_queue.person import Person
 from group_queue.history import History
 
@@ -26,13 +26,9 @@ class Queue:
         Получает список группы из файла groupList.txt или groupListWindow.txt в зависимости от кодировки
         :return: сгенерированный список группы с элементами Person
         """
-        # TODO: do with encoding on UTF-8
-        if os.name == "nt":
-            filename = "group_queue/groupListWindows.txt"
-        else:
-            filename = "group_queue/groupList.txt"
+        filename = "group_queue/groupList.txt"
 
-        file = open(filename, "r")
+        file = open(filename, "r", encoding="UTF-8")
         group_list = []
         while True:
 

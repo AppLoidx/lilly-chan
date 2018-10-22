@@ -2,7 +2,7 @@ import bs4
 import requests
 
 from editor import editor
-from parser.parser import Parser
+from parser_m.parser import Parser
 
 
 class Schedule(Parser):
@@ -22,8 +22,8 @@ class Schedule(Parser):
         _SCHEDULE_PAGE_NOT_PARITY = \
             f"http://www.ifmo.ru/ru/schedule/0/{group_name}/2/raspisanie_zanyatiy_{group_name}.htm"
 
-        self.PARITY_SCH = bs4.BeautifulSoup(requests.get(_SCHEDULE_PAGE_PARITY).text, "html.parser")
-        self.NOT_PARITY_SCH = bs4.BeautifulSoup(requests.get(_SCHEDULE_PAGE_NOT_PARITY).text, "html.parser")
+        self.PARITY_SCH = bs4.BeautifulSoup(requests.get(_SCHEDULE_PAGE_PARITY).text, "html.parser_m")
+        self.NOT_PARITY_SCH = bs4.BeautifulSoup(requests.get(_SCHEDULE_PAGE_NOT_PARITY).text, "html.parser_m")
 
 
     def test(self):
