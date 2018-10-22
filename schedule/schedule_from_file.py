@@ -1,3 +1,6 @@
+from schedule.day import Day
+
+
 class ScheduleFromFile:
 
     @staticmethod
@@ -5,7 +8,7 @@ class ScheduleFromFile:
         """
         :param filename: путь к файлу с расписанием .
         Формат файла:   (1 строка - Заголовок расписания, возвращается как первая строка
-                        2 - указание названий столбцов (необязательно)
+                        2 строка - указание названий столбцов (необязательно, но строка должна быть)
                         С третьего начинаются дни с парами в формате:
                         <День недели> <Время> <четность недели> <аудитория> <предмет> <преподаватель>
 
@@ -21,7 +24,7 @@ class ScheduleFromFile:
             return "Не правильно введана четность недели. Простите! Возможно, это ошибка программы..." \
                    "Пожалуйста, сообщите моему создателю."
 
-        f = open(filename, 'r')
+        f = open(filename, 'r', encoding="UTF-8")
         group_name = f.readline()
         _DAY, _TIME, _WEEK, _AUD, _DIS, _TEACHER = f.readline().split()
         temp = "."
@@ -38,3 +41,13 @@ class ScheduleFromFile:
                 result += "\n" + "-----\n"
 
         return result
+
+    def get_schedule(self, next_day_value: int = 0):
+
+        # Файлы с разными кодрировками
+        sh_filename = "schedule/sh.txt"
+
+        day = Day()
+        today_day, week_parity = day.get_day_parity(next_day_value)
+
+        return self.get_schedule_from_file(sh_filename, today_day, week_parity)
