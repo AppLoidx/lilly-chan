@@ -1,3 +1,34 @@
+# Welcome to the lilly-chan wiki!
+Для корректной работы программы необходимы следующие модули:
+1. [Date](https://github.com/AppLoidx/lilly-chan/tree/master/parser_m) (_из parser_m.parser_) для day.py
+<br>Нужен для получения текущей даты и четности недели.
+
+***
+## Основы работы
+Во-первых, необходимо создать экземпляр класса ScheduleFromFile:<br>
+`from schedule import schedule_from_file`<br>
+`schedule = schedule_from_file.ScheduleFromFile()`
+
+Для получения описания метода сделайте вызов:
+<br>
+`help(<имя_метода>)`<br>Например:<br>
+`help(schedule.get_schedule_from_file)`
+
+### Интерфейс класса ScheduleFromFile:
+**get_schedule_from_file(filename, day, week_parity):**<br><br>
+Статический метод, возвращающий отформатированное расписание<br><br>
+_<$filename>_ - имя файла с расписанием. Имеет определенный формат (смотрите через help или из исходников)<br>
+_<$day>_ - день недели в именительном падеже с маленькой буквы т.к идет абсолютное сравнение<br>
+_<$week_patiry>_ - четность недели (четная/нечетная или 0/1) не зависит от регистра<br>
+<br>
+**get_schedule(self, next_day_value: int = 0):**<br><br>
+Основной метод для работы с расписанием. Файл с расписанием задан по умолчанию "schedule/sh.txt".<br>
+
+_<$next_day_value>_ - Номер дня от текущего, который нужно вывести. Например, 1 - завтра, 2 - послезавтра и т.д.
+<br>
+# Удачной работы!
+![...From Lilly](https://s1.zerochan.net/Platelet.600.2360751.jpg)
+<br><br>
 Пример работы программы
 =
 User:
