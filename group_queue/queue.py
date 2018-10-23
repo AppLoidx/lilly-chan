@@ -1,4 +1,3 @@
-import os
 import random
 from parser_m.date import Date
 from group_queue.person import Person

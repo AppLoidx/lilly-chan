@@ -1,4 +1,7 @@
-from schedule import day
+from group_queue.queue import Queue
 
-day = day.Day()
-day.test()
+queue = Queue()
+
+queue.new_queue()
+
+

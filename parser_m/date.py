@@ -2,7 +2,6 @@ from parser_m.parser import Parser
 
 
 class Date(Parser):
-    MONTH = {"ОКТЯБРЬ": 10, "НОЯБРЬ": 11, "ДЕКАБРЬ": 12}
 
     def __init__(self):
 
@@ -22,6 +21,10 @@ class Date(Parser):
         return self.clean_all_tag_from_str(str(self.b.select(".page")[0].findAll("h2")[1])).split()[1]
 
     def get_week_parity(self):
+        """
+        Возвращает четность недели
+        :return: Четная/Нечетная
+        """
         b_site = self.set_http("http://www.ifmo.ru/ru/schedule/0/P3112/raspisanie_zanyatiy_P3112.htm")
 
         return self.clean_all_tag_from_str(b_site.select(".schedule-week")[0].find("strong"))
