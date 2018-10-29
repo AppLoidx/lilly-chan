@@ -76,6 +76,7 @@ class Queue:
         Вызывается когда кто-то прошел очередь. Инициализирует сдвиг очереди
         :return: None
         """
+        self._queue_list[self._queue_value].set_passed(True)
         self._queue_value += 1
 
         # При переполнении

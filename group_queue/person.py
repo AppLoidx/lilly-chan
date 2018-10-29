@@ -4,13 +4,16 @@ class Person:
         self._person_id = person_id
         self._name = name
         # Прошел очередь
-        self.passed = False
+        self._passed = False
 
     def set_passed(self, passed: bool):
-        self.passed = passed
+        self._passed = passed
 
     def get_id(self) -> str:
         return self._person_id
 
     def get_name(self) -> str:
         return self._name
+
+    def get_passed(self):
+        return self._passed
