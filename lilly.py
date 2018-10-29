@@ -402,8 +402,6 @@ class Lilly:
         :return: возвращает метод, определенный в параметре NEXT_INPUT
         """
 
-        print(self.NEXT_INPUT)
-
         if self.NEXT_INPUT == "java_questions_mode":
             return self.java_questions_mode(input_value)
 
