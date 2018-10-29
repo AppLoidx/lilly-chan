@@ -1,7 +1,17 @@
-from group_queue.queue import Queue
+def clean(text):
+    result = ""
+    notAppend = False
 
-queue = Queue()
+    for i in list(text):
+        if i =="[":
+            notAppend = True
+        if notAppend:
+            pass
+        else:
+            result +=i
+        if i =="]":
+            notAppend = False
 
-queue.new_queue()
+    return result
 
-
+print(clean("[adsasdasd]tttttttt[asdas]"))

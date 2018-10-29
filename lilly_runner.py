@@ -5,11 +5,11 @@ import config
 
 
 def write_msg(user_id, s):
-    vk.method('messages.send', {'user_id': user_id, 'message': s})
+    vk.method('messages.send', {'peer_id': user_id, 'message': s})
 
 
 # Авторизуемся как сообщество
-vk = vk_api.VkApi(token=config.token)
+vk = vk_api.VkApi(token=config.vk_api_token)
 
 # Работа с сообщениями
 longpoll = VkLongPoll(vk)

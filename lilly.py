@@ -1,5 +1,4 @@
 from random import random
-import os
 from questions.get_question import GetQuestion
 from parser_m.recipe import Recipe
 from parser_m import parser
@@ -255,7 +254,8 @@ class Lilly:
                    "●Следющий\n" \
                    "●Прыдыдущий\n" \
                    "●Сейчас\n" \
-                   "●История\n"
+                   "●История\n" \
+                   "●Покажи очередь\n"
         else:
             if self.compare(input_value.split()[0], ["Поменять"]):
                 self.queue.swap(input_value.split()[1], input_value.split()[2])
@@ -290,6 +290,17 @@ class Lilly:
                 result = ""
                 for history in self.queue.history.get_history():
                     result += history + "\n"
+
+                return result
+
+            elif self.compare(input_value, ["Покажи очередь", "очередь"]):
+                result = ""
+                for pers in self.queue.get_queue():
+                    if pers.get_passed():
+                        passed = "Прошел"
+                    else:
+                        passed = "Ожидает"
+                    result += f"{pers.get_name()} ({pers.get_id()}) [{passed}]\n"
 
                 return result
 
