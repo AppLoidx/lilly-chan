@@ -21,13 +21,13 @@ class Recipe(Parser):
 
         result = [0]
         if food_type == "breakfast":
-            self.b = self.set_http(self._BREAKFAST_HTTP)
+            b = self.set_http(self._BREAKFAST_HTTP)
         elif food_type == "lunch":
-            self.set_http(self._LUNCH_HTTP)
+            b = self.set_http(self._LUNCH_HTTP)
         else:
-            self.set_http(self._SUPPER_HTTP)
+            b = self.set_http(self._SUPPER_HTTP)
 
-        a = self.b.findAll(attrs={"class": "title"})
+        a = b.findAll(attrs={"class": "title"})
         for i in range(len(a)):
             temp = str(a[i])
             if i > 2 & i < 70:

@@ -1,7 +1,7 @@
 from editor.editor import Edit
 from lilly import Lilly
 import vk_api.vk_api
-from vk_api.bot_longpoll import VkBotLongPoll, VkBotMessageEvent
+from vk_api.bot_longpoll import VkBotLongPoll
 from vk_api.bot_longpoll import VkBotEventType
 from config import vk_api_token
 
@@ -29,4 +29,3 @@ for event in longpoll.listen():
                                    Edit.clean_str_from_symbol(event.object.text, "[", "]")[1::]))
 
         print('Текст: ', event.object.text, end="\n")
-

@@ -111,7 +111,7 @@ class Queue:
         :return: Следующий в очереди
         """
         if self._queue_value == len(self._queue_list) - 1:
-            return self._queue_list[0].get_name()
+            return self._queue_list[0]
         else:
             return self._queue_list[self._queue_value + 1]
 

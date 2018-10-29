@@ -6,7 +6,6 @@ from schedule.schedule_from_file import ScheduleFromFile
 from client_server import server_client
 from parser_m import date
 from group_queue.queue import Queue
-from input_manager import InputManager
 
 
 class Lilly:
@@ -47,7 +46,7 @@ class Lilly:
                          ["HELP", "ПОМОЩЬ"],  # 10
                          ["JAVA OOP", "ВОПРОС ПРО JAVA OOP", "ЗАДАЙ ВОПРОС ПРО JAVA"],  # 11
                          ["СОЗДАЙ ОЧЕРЕДЬ"],  # 12
-                         ["ОЧЕРЕДЬ","РЕДАКТИРОВАТЬ ОЧЕРЕДЬ"]    # 13
+                         ["ОЧЕРЕДЬ", "РЕДАКТИРОВАТЬ ОЧЕРЕДЬ"]    # 13
                          ]
 
         # TODO: convert it to file or sql data base
@@ -123,8 +122,7 @@ class Lilly:
         # TODO: realize it
         # Авторизация супер пользователя
         elif self.compare(command, self.COMMANDS[3]):
-            self.NEXT_INPUT = "admin_login"
-            return "Введите логин и пароль отдельными сообщениями"
+            return "Function not realized"
 
         # Отправление погоды сообщением
         elif self.compare(command, self.COMMANDS[6]):
@@ -174,7 +172,6 @@ class Lilly:
 
         elif self.compare(command, self.COMMANDS[13]):
             self.NEXT_INPUT = "queue_edit_mode"
-            self.im.set_next_method("queue_edit_mode")
             return self.queue_edit_mode(None)
 
         # Команда не распознана
@@ -201,7 +198,7 @@ class Lilly:
 
         # Следующий ввод перенаправляем в этот метод
         self.NEXT_INPUT = "java_questions_mode"
-        self.im.set_next_method("java_questions_mode")
+
         if command == "@#":
             return ("Теперь я в режиме вопросов :)\n"
                     "Доступные команды:\n"
@@ -238,7 +235,6 @@ class Lilly:
 
         elif self.compare(command.upper(), ["ЗАКОНЧИТЬ"]):
             self.NEXT_INPUT = "get_command"
-            self.im.set_next_method("get_command")
             return "Режим вопросов закончен"
         else:
             return "Не поняла вашего ответа, пожалуйста повторите"
@@ -263,7 +259,7 @@ class Lilly:
 
             elif self.compare(input_value.split()[0], ["Добавить"]):
                 if len(input_value.split()) > 2:
-                    self.queue.add_person(input_value.split()[1],int(input_value.split()[3]))
+                    self.queue.add_person(input_value.split()[1], int(input_value.split()[3]))
                 else:
                     self.queue.add_person(input_value.split()[1])
                 return f"{input_value.split()[1]} был добавлен в очередь"
@@ -307,36 +303,10 @@ class Lilly:
             elif self.compare(input_value, ["Выйти", "Закончить"]):
                 self.NEXT_INPUT = "get_command"
 
-                self.im.set_next_method("get_command")
-
                 return "Вы вышли из режима очереди"
 
             else:
                 return self.get_command(input_value)
-
-    def get_schedule(self, tomorrow="no"):
-
-        # TODO: Rewrite it to class Day
-        days = ["понедельник", "вторник", "среда", "четверг", "пятница", "суббота", "воскресенье"]
-
-        # Файлы с разными кодрировками
-        sh_filename = "schedule/sh.txt"
-
-        today_day = self.date.get_day_of_week().strip()
-
-        # Получение следующего дня
-        if tomorrow == "tomorrow":
-            for i in range(len(days)):
-                if days[i] == today_day:
-                    if i + 1 == len(days):
-                        today_day = days[0]
-                        break
-                    else:
-                        today_day = days[i+1]
-                        break
-
-        week_parity = self.date.get_week_parity()
-        return self.schedule.get_schedule_from_file(sh_filename, today_day, week_parity)
 
     # TODO: Rewrite to class Recipe
     def get_breakfast_recipe(self, amount: int = 0) -> str:
@@ -376,11 +346,11 @@ class Lilly:
 
                 self.NEXT_INPUT = "breakfast_more_check"
 
-                self.im.set_next_method("breakfast_more_check")
-
                 self.RECIPE_WATCHED += temp
                 return "Вот что я нашла: \n" + ret
 
+    # TODO: Rewrite and realize
+    """
     im = InputManager()
     im.set_methods(
         java_questions_mode,
@@ -391,6 +361,7 @@ class Lilly:
 
     def update_scr(self, input_value):
         self.im.update(input_value)
+    """
 
     # TODO: Rewrite it to class CommandManager
     def update_screen(self, input_value):
@@ -408,14 +379,6 @@ class Lilly:
         if self.NEXT_INPUT == "get_command":
             return self.get_command(input_value)
 
-        if self.NEXT_INPUT == "admin_login":
-            self.NEXT_INPUT = "admin_pwd"
-            return self.admin_login(input_value)
-
-        if self.NEXT_INPUT == "admin_pwd":
-            self.NEXT_INPUT = "get_command"
-            return self.admin_pwd(input_value)
-
         if self.NEXT_INPUT == "get_breakfast_recipe":
             return self.get_breakfast_recipe(input_value)
 
@@ -427,13 +390,6 @@ class Lilly:
                 return self.get_command(input_value)
         if self.NEXT_INPUT == "queue_edit_mode":
             return self.queue_edit_mode(input_value)
-
-    def admin_login(self, login):
-        self.NEXT_INPUT = "admin_pwd"
-
-    def admin_pwd(self, pwd):
-        if pwd == "123":
-            self.SUPER_USER = True
 
     # TODO: Rewrite it to class Compare and upgrade algorithm
 
@@ -483,9 +439,10 @@ class Lilly:
         return False
 
     DOCUMENTATION = """
-    РАСПИСАНИЕ - еще в разработке
+    РАСПИСАНИЕ - показывает расписание
     ПОГОДА - показывает погоду
     ЗАВТРАК - показывает рецепты блюд на завтрак
         - после команды ЗАВТРАК можно ввести "еще", чтобы посмотреть еще несколько рецпетов
     ЗАДАЙ ВОПРОС ПРО JAVA - задает вопросы по теме языка программирования Java
+    СОЗДАЙ ОЧЕРЕДЬ - создает очередь для сдачи лабы
     """

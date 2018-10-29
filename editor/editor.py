@@ -1,4 +1,4 @@
-class Edit():
+class Edit:
 
     @staticmethod
     def clean_tag_from_str(string_line):
@@ -48,4 +48,3 @@ class Edit():
                 append = True
 
         return res
-

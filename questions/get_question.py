@@ -1,16 +1,13 @@
 import random
-import os
+
 
 class GetQuestion:
 
     answers_file = None
     questions_file = None
 
-    # Проблемы с кодировками на разных системах
-    if os.name == "nt":
-        files_path = "questions/java/QaA_javaWindows"
-    else:
-        files_path = "questions/java/QaA_java"
+    files_path = "questions/java/QaA_java"
+
     wasted_questions = []
     last_question = None
 
@@ -18,8 +15,8 @@ class GetQuestion:
         self.q_a_a = self.get_questions_from_file()
 
     def update_file_open(self):
-        self.answers_file = open(self.files_path + "/java_oop_answers", "r")
-        self.questions_file = open(self.files_path + "/java_oop_questions", "r")
+        self.answers_file = open(self.files_path + "/java_oop_answers", "r", encoding="UTF-8")
+        self.questions_file = open(self.files_path + "/java_oop_questions", "r", encoding="UTF-8")
 
         self.answers_file = self.answers_file.read().split("$$")
         self.questions_file = self.questions_file.read().split("\n")
@@ -55,4 +52,3 @@ class GetQuestion:
     def get_last_question(self): return self.last_question
 
     def reset_wasted_questions(self): self.wasted_questions = []
-
