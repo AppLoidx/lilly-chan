@@ -1,4 +1,4 @@
-class ArrayEdit():
+class Edit():
 
     @staticmethod
     def clean_tag_from_str(string_line):
@@ -25,7 +25,27 @@ class ArrayEdit():
     def clean_spaces_from_array(array: list):
         result = []
         for i in array:
-            if ArrayEdit.clean_tag_from_str(str(i)) != "":
+            if Edit.clean_tag_from_str(str(i)) != "":
                 result.append(i)
 
         return result
+
+    @staticmethod
+    def clean_str_from_symbol(string, open_symbol, close_symbol=None, clean_content=True):
+        append = True
+        res = ""
+        for letter in list(string):
+            if letter == open_symbol:
+                append = False
+
+            if append:
+                res += letter
+            else:
+                if not clean_content:
+                    append = True
+
+            if letter == close_symbol:
+                append = True
+
+        return res
+
