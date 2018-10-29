@@ -61,21 +61,21 @@ class Parser:
     def get_weather_today(self, city: str = "санкт-петербург") -> list:
 
         http = "https://sinoptik.com.ru/погода-" + city
-        self.set_http(http)
+        b = self.set_http(http)
 
-        p3 = self.b.select('.temperature .p3')
+        p3 = b.select('.temperature .p3')
         weather1 = p3[0].getText()
-        p4 = self.b.select('.temperature .p4')
+        p4 = b.select('.temperature .p4')
         weather2 = p4[0].getText()
-        p5 = self.b.select('.temperature .p5')
+        p5 = b.select('.temperature .p5')
         weather3 = p5[0].getText()
-        p6 = self.b.select('.temperature .p6')
+        p6 = b.select('.temperature .p6')
         weather4 = p6[0].getText()
 
         result = ''
         result = result + ('Утром :' + weather1 + ' ' + weather2) + '\n'
         result = result + ('Днём :' + weather3 + ' ' + weather4) + '\n'
-        temp = self.b.select('.rSide .description')
+        temp = b.select('.rSide .description')
         weather = temp[0].getText()
         result = result + weather.strip()
 
